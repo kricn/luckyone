@@ -1,12 +1,20 @@
 import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { UserService } from './user.service'
 
+const userQuery = ['username', 'id']
+
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
-    findAll(@Query() query) {
+    findAll(@Query() q) {
+        let query = {}
+        userQuery.forEach(item => {
+            if (q[item]) {
+                query[item] = q[item]
+            }
+        })
         return this.userService.find(query)
     }
 

@@ -13,6 +13,7 @@ export class UserService {
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>){}
 
     async find(options) {
+        console.log(options)
         return await this.userRepository.find(options)
     }
 
