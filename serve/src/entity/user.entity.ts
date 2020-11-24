@@ -7,7 +7,10 @@ export class User {
     @Column({length: 45, unique: true})
     username: string;
 
-    @Column({length: 45})
+    @Column({
+        length: 45,
+        default: ""
+    })
     nickname: string;
 
     @Column({length: 20})

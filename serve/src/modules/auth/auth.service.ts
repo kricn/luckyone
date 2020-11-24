@@ -33,7 +33,6 @@ export class AuthService {
 
   async certificate(user: any) {
     const payload = { username: user.username, id: user.id, nickname: user.nickname, type: user.type };
-    console.log(payload)
     console.log('JWT验证 - Step 3: 处理 jwt 签证');
     try {
       const token = this.jwtService.sign(payload);

@@ -1,29 +1,34 @@
 import { CanActivate, ExecutionContext, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { Reflector } from '@nestjs/core';
+import { AuthGuard, IAuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class RoleGuard implements CanActivate {
+  constructor( private readonly reflector: Reflector) {}
+
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     console.log('进入全局权限守卫')
     const request = context.switchToHttp().getRequest()
-    const token = context.switchToRpc().getData().headers.token;
+    const noAuth = this.reflector.get<boolean>('noAuth', context.getHandler())
+    console.log(noAuth)
 
-    if (this.hasUrl(this.whiteList, request.url)) {
-      return true
-    }
-
-    if (token) {
-      try {
-        return true
-      } catch(e) {
-        throw new HttpException('未授权', HttpStatus.UNAUTHORIZED)
-      }
-    } else {
-      throw new HttpException('未授权', HttpStatus.UNAUTHORIZED)
-    }
+    // if (this.hasUrl(this.whiteList, request.url)) {
+    //   return true
+    // }
+    const guard = RoleGuard.getAuthGuard(noAuth);
+    return guard.canActivate(context); 
   };
+
+  private static getAuthGuard(noAuth: boolean): IAuthGuard {
+    // if (noAuth) {
+    //   return new (AuthGuard('local'))();
+    // } else {
+      return new (AuthGuard('jwt'))();
+    // }
+  }
 
   private whiteList: string[] = [
     '/user/login',

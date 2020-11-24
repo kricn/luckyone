@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { NoAuth } from 'src/common/decorator/noAuth';
 import { AuthService } from '../auth/auth.service';
 import { UserLoginDto } from './dto/user.login.dto';
 import { UserService } from './user.service'
@@ -34,6 +36,7 @@ export class UserController {
         return await this.userService.register(req)
     }
 
+    @NoAuth()
     @Get()
     async findAll(@Query() q) {
         let query = {}

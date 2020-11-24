@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './common/auth/auth.guard';
+import { RoleGuard } from './common/auth/auth.guard';
 
 
 
@@ -31,7 +31,7 @@ import { AuthGuard } from './common/auth/auth.guard';
     AppService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard
+      useClass: RoleGuard
     }
   ],
 })

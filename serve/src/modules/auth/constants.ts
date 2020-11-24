@@ -1,3 +1,3 @@
 export const jwtConstants = {
-    secret: 'alian' // 秘钥
+    secret: 'hello world' // 秘钥
   };
