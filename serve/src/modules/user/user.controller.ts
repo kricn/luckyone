@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
+import { UserLoginDto } from './dto/user.login.dto';
 import { UserService } from './user.service'
 
 const userQuery = ['username', 'id']
@@ -9,27 +9,8 @@ const userQuery = ['username', 'id']
 export class UserController {
     constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 
-    // @Get()
-    // findAll(@Query() q) {
-    //     let query = {}
-    //     userQuery.forEach(item => {
-    //         if (q[item]) {
-    //             query[item] = q[item]
-    //         }
-    //     })
-    //     return this.userService.find(query)
-    // }
-
-    // @Get()
-    // find(@Query('id') id) {
-    //     if (!id) {
-    //         return this.userService.find()
-    //     }
-    //     return this.userService.find(id)
-    // }
-
     @Post('/login')
-    async login(@Body() req) {
+    async login(@Body() req: UserLoginDto) {
         console.log('JWT验证 - Step 1: 用户请求登录');
         const res = await this.authService.validateUser(req.username, req.password)
         switch (res.code) {
@@ -51,5 +32,26 @@ export class UserController {
     @Post('register')
     async register(@Body() req) {
         return await this.userService.register(req)
+    }
+
+    @Get()
+    async findAll(@Query() q) {
+        let query = {}
+        let res = []
+        userQuery.forEach(item => {
+            if (q[item]) {
+                query[item] = q[item]
+            }
+        })
+        const data = await this.userService.find(query)
+        data.forEach(item => {
+            res.push({
+                id: item.id,
+                username: item.username,
+                nickname: item.nickname,
+                type: item.type
+            })
+        })
+        return res
     }
 }

@@ -1,12 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, getConnection  } from 'typeorm';
 import {User} from '../../entity/user.entity';
-
-interface query {
-    username?: string,
-    id?: string
-}
 
 @Injectable()
 export class UserService {
@@ -52,6 +47,12 @@ export class UserService {
             where: {
                 username: username
             }
+        })
+    }
+
+    async find(options) {
+        return await this.userRepository.find({
+            where: options
         })
     }
 }
