@@ -6,7 +6,10 @@ import { Avatar } from '../../entity/avatar.entity'
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>){}
+    constructor(
+        @InjectRepository(User) private readonly userRepository: Repository<User>,
+        @InjectRepository(Avatar) private readonly avatarReppository: Repository<Avatar>
+    ){}
 
     async login(username: string) {
         return await this.userRepository.findOne({
@@ -74,9 +77,10 @@ export class UserService {
     async uploadAvatar() {
         const avatar = new Avatar()
         const user = new User()
-        avatar.name = 'alian'
-        avatar.avatar_url = 'www.abc.com'
-        user.username = "test"
+        avatar.name = 'test'
+        avatar.avatar_url = 'www.test.com'
+        await this.avatarReppository.save(avatar)
+        user.username = "test" + Math.random()
         user.password = "test"
         user.avatar = avatar
         return await this.userRepository.save(user)

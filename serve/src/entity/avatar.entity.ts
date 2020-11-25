@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, OneToOne } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, OneToOne, JoinColumn } from "typeorm";
 import { User } from './user.entity'
 @Entity()
 export class Avatar {
@@ -12,5 +12,6 @@ export class Avatar {
     avatar_url: string;
 
     @OneToOne(type => User, user => user.avatar)
+    @JoinColumn()
     user: User
 }
