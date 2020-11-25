@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { NoAuth } from 'src/common/decorator/noAuth';
 import { AuthService } from '../auth/auth.service';
@@ -57,5 +57,10 @@ export class UserController {
             take: q.take
         })
         return data
+    }
+
+    @Put('avatar')
+    async avatar() {
+        return this.userService.uploadAvatar()
     }
 }

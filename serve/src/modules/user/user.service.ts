@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository, Like  } from 'typeorm';
 import {User} from '../../entity/user.entity';
+import { Avatar } from '../../entity/avatar.entity'
 
 @Injectable()
 export class UserService {
@@ -51,7 +52,6 @@ export class UserService {
     }
 
     async find(options) {
-        console.log(options)
         const user = await getRepository(User)
             .createQueryBuilder('u')
             .select(['u.id', 'u.username', 'u.nickname', 'u.role'])
@@ -69,5 +69,16 @@ export class UserService {
             return user.getMany()
         }
         return user.take(options.take || 10).getMany()
+    }
+
+    async uploadAvatar() {
+        const avatar = new Avatar()
+        const user = new User()
+        avatar.name = 'alian'
+        avatar.avatar_url = 'www.abc.com'
+        user.username = "test"
+        user.password = "test"
+        user.avatar = avatar
+        return await this.userRepository.save(user)
     }
 }
