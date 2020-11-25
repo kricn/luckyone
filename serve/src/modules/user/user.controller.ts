@@ -56,14 +56,6 @@ export class UserController {
             skip: q.skip,
             take: q.take
         })
-        data.forEach(item => {
-            res.push({
-                id: item.id,
-                username: item.username,
-                nickname: item.nickname,
-                role: item.role
-            })
-        })
         return data
     }
 }

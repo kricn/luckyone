@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getConnection  } from 'typeorm';
+import { Repository, getRepository, Like  } from 'typeorm';
 import {User} from '../../entity/user.entity';
 
 @Injectable()
@@ -51,12 +51,16 @@ export class UserService {
     }
 
     async find(options) {
-        console.log(options)
-        return await this.userRepository.find({
-            where: options.where,
-            select: ['id', 'username', 'nickname', 'role'],
-            skip: options.skip || 0,
-            take: options.take || 10
-        })
+        const user = await getRepository(User)
+            .createQueryBuilder('u')
+            .select(['u.id', 'u.username', 'u.nickname', 'u.role'])
+            .where(
+                `${options.where.username?'u.username=:username':''}`,
+                {username: options.where.username}
+            )
+            .skip(options.skip || 0)
+            .take(options.take || 10)
+            .getMany()
+        return user
     }
 }
