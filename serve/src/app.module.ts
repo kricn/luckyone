@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { RoleGuard } from './common/auth/auth.guard';
+import { RoleGuard } from './common/auth/roles.guard';
 
 
 

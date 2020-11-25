@@ -10,25 +10,25 @@ export class RoleGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    console.log('进入全局权限守卫')
     const request = context.switchToHttp().getRequest()
     const noAuth = this.reflector.get<boolean>('noAuth', context.getHandler())
-    console.log(noAuth)
 
-    // if (this.hasUrl(this.whiteList, request.url)) {
-    //   return true
-    // }
-    const guard = RoleGuard.getAuthGuard(noAuth);
-    return guard.canActivate(context); 
+    if (this.hasUrl(this.whiteList, request.url) || noAuth) {
+      return true
+    }
+
+    return new (AuthGuard('jwt'))().canActivate(context)
+    // const guard = RoleGuard.getAuthGuard(noAuth);
+    // return guard.canActivate(context); 
   };
 
-  private static getAuthGuard(noAuth: boolean): IAuthGuard {
-    // if (noAuth) {
-    //   return new (AuthGuard('local'))();
-    // } else {
-      return new (AuthGuard('jwt'))();
-    // }
-  }
+  // private static getAuthGuard(noAuth: boolean): IAuthGuard {
+  //   if (noAuth) {
+  //     return new (AuthGuard('local'))();
+  //   } else {
+  //     return new (AuthGuard('jwt'))();
+  //   }
+  // }
 
   private whiteList: string[] = [
     '/user/login',

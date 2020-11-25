@@ -13,7 +13,6 @@ export class UserController {
 
     @Post('/login')
     async login(@Body() req: UserLoginDto) {
-        console.log('JWT验证 - Step 1: 用户请求登录');
         const res = await this.authService.validateUser(req.username, req.password)
         switch (res.code) {
             case 0:
@@ -33,10 +32,16 @@ export class UserController {
 
     @Post('register')
     async register(@Body() req) {
+        for (let i =0; i < 1000; i ++) {
+            await this.userService.register({
+                username: Math.random() + ' _ ' + i,
+                password: Math.random()
+            })
+        }
         return await this.userService.register(req)
     }
 
-    @NoAuth()
+
     @Get()
     async findAll(@Query() q) {
         let query = {}
@@ -46,15 +51,19 @@ export class UserController {
                 query[item] = q[item]
             }
         })
-        const data = await this.userService.find(query)
+        const data = await this.userService.find({
+            where: query,
+            skip: q.skip,
+            take: q.take
+        })
         data.forEach(item => {
             res.push({
                 id: item.id,
                 username: item.username,
                 nickname: item.nickname,
-                type: item.type
+                role: item.role
             })
         })
-        return res
+        return data
     }
 }

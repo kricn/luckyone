@@ -15,7 +15,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   
 
   async validate(payload: any, done: Function) {
-    console.log(`JWT验证 - 被守卫调用`);
     return { userId: payload.id, username: payload.username, nickname: payload.nickname, type: payload.type };
   }
 }

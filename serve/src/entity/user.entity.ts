@@ -19,5 +19,5 @@ export class User {
     @Column({
         default: 1
     })
-    type: number;
+    role: number;
 }

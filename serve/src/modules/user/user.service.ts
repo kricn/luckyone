@@ -51,8 +51,12 @@ export class UserService {
     }
 
     async find(options) {
+        console.log(options)
         return await this.userRepository.find({
-            where: options
+            where: options.where,
+            select: ['id', 'username', 'nickname', 'role'],
+            skip: options.skip || 0,
+            take: options.take || 10
         })
     }
 }

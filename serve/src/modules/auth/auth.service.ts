@@ -7,7 +7,6 @@ export class AuthService {
   constructor(private readonly usersService: UserService, private readonly jwtService: JwtService) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    console.log('JWT验证 - Step 2: 校验用户信息');
     const user = await this.usersService.findUser(username);
     if (user) {
       if (password === user.password) {
@@ -32,8 +31,7 @@ export class AuthService {
   }
 
   async certificate(user: any) {
-    const payload = { username: user.username, id: user.id, nickname: user.nickname, type: user.type };
-    console.log('JWT验证 - Step 3: 处理 jwt 签证');
+    const payload = { username: user.username, id: user.id, nickname: user.nickname, role: user.role };
     try {
       const token = this.jwtService.sign(payload);
       return {
