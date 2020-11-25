@@ -51,16 +51,23 @@ export class UserService {
     }
 
     async find(options) {
+        console.log(options)
         const user = await getRepository(User)
             .createQueryBuilder('u')
             .select(['u.id', 'u.username', 'u.nickname', 'u.role'])
             .where(
-                `${options.where.username?'u.username like :username':''}`,
-                {username: '%'+options.where.username+'%'}
+                `${options.where.username?'u.username like :username':''}
+                 ${options.where.id?'or u.id = :id':''}
+                `,
+                {
+                    username: '%'+options.where.username+'%',
+                    id: options.where.id
+                }
             )
             .skip(options.skip || 0)
-            .take(options.take || 10)
-            .getMany()
-        return user
+        if (options.take == -1 || options.take < 0) {
+            return user.getMany()
+        }
+        return user.take(options.take || 10).getMany()
     }
 }
