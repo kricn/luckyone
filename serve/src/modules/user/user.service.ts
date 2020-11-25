@@ -55,8 +55,8 @@ export class UserService {
             .createQueryBuilder('u')
             .select(['u.id', 'u.username', 'u.nickname', 'u.role'])
             .where(
-                `${options.where.username?'u.username=:username':''}`,
-                {username: options.where.username}
+                `${options.where.username?'u.username like :username':''}`,
+                {username: '%'+options.where.username+'%'}
             )
             .skip(options.skip || 0)
             .take(options.take || 10)
