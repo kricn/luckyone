@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { NoAuth } from 'src/common/decorator/noAuth';
 import { AuthService } from '../auth/auth.service';
@@ -32,12 +32,6 @@ export class UserController {
 
     @Post('register')
     async register(@Body() req) {
-        for (let i =0; i < 1000; i ++) {
-            await this.userService.register({
-                username: Math.random() + ' _ ' + i,
-                password: Math.random()
-            })
-        }
         return await this.userService.register(req)
     }
 
@@ -59,8 +53,13 @@ export class UserController {
         return data
     }
 
-    @Put('avatar')
-    async avatar() {
-        return this.userService.uploadAvatar()
+    @Get('/:username')
+    async getUser(@Param() params) {
+        return await this.userService.findUser(params.username)
+    }
+
+    @Put()
+    update(@Body() body) {
+        return this.userService.update(body)
     }
 }

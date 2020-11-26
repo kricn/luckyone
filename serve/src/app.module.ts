@@ -9,6 +9,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from './common/auth/roles.guard';
+import { UploadModule } from './modules/upload/upload.module';
 
 
 
@@ -24,7 +25,8 @@ import { RoleGuard } from './common/auth/roles.guard';
     }),
 
     UserModule,
-    AuthModule
+    AuthModule,
+    UploadModule
   ],
   controllers: [AppController],
   providers: [
