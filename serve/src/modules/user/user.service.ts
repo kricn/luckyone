@@ -62,8 +62,15 @@ export class UserService {
             .leftJoinAndSelect("u.profile", "profile")
             .where(`u.username = :username`, {username: username})
             .getOne()
-        console.log(username)
         return user
+    }
+
+    async findOne(username) {
+        return await this.userRepository.findOne({
+            where: {
+                username: username
+            }
+        })
     }
 
     async find(options) {

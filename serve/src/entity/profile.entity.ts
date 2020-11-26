@@ -5,16 +5,24 @@ export class Profile {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({length: 255})
+    @Column({
+        default: ""
+    })
     avatar: string;
 
-    @Column()
+    @Column({
+        default: ""
+    })
     cover: string;
 
-    @Column()
+    @Column({
+        default: ""
+    })
     article: string
 
-    @Column()
+    @Column({
+        default: ""
+    })
     summary: string
 
     @OneToOne(type => User, user => user.profile)

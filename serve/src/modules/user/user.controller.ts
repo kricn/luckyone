@@ -12,7 +12,7 @@ export class UserController {
     constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 
     @Post('/login')
-    async login(@Body() req: UserLoginDto) {
+    async login(@Body() req) {
         const res = await this.authService.validateUser(req.username, req.password)
         switch (res.code) {
             case 0:
