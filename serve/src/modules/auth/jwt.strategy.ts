@@ -5,7 +5,8 @@ import { jwtConstants } from './constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromHeader('token'),
       ignoreExpiration: false,
@@ -15,6 +16,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   
 
   async validate(payload: any, done: Function) {
-    return { userId: payload.id, username: payload.username, nickname: payload.nickname, type: payload.type };
+    return { id: payload.id, username: payload.username, role: payload.role };
   }
 }

@@ -7,9 +7,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { RoleGuard } from './common/auth/roles.guard';
 import { UploadModule } from './modules/upload/upload.module';
+import { HttpExceptionFilter } from './common/filter/http-exception.filter'
 
 
 
@@ -34,7 +35,11 @@ import { UploadModule } from './modules/upload/upload.module';
     {
       provide: APP_GUARD,
       useClass: RoleGuard
-    }
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

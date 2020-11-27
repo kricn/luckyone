@@ -1,11 +1,9 @@
 import { HttpException, HttpStatus, Injectable, Put } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getRepository, getConnection  } from 'typeorm';
+import { Repository, getConnection  } from 'typeorm';
 import {User} from '../../entity/user.entity';
 import { Profile } from '../../entity/profile.entity'
-import { join } from 'path'
-import * as fs from 'fs'
-// import { writeImage } from '../../utils/common'
+import { writeImage } from '../../utils/common'
 
 @Injectable()
 export class UserService {
@@ -14,7 +12,7 @@ export class UserService {
         @InjectRepository(Profile) private readonly profileRepository: Repository<Profile>
     ){}
 
-    async login(username: string) {
+    async findUser(username: string) {
         return await this.userRepository.findOne({
             where: {username: username}
         })
@@ -22,18 +20,11 @@ export class UserService {
 
     async register (req: any): Promise<any> {
         const { username, password } = req;
-        if (!password) {
-            return {
-                code: 400,
-                msg: '密码不能为空'
-            }
-        }
         const user = await this.findUser(username);
         if (user) {
-            return {
-                code: 400,
-                msg: '用户已存在'
-            }
+            throw new HttpException({
+                message: '用户已存在'
+            }, HttpStatus.BAD_REQUEST)
         }
         try {
             let user = new User()
@@ -47,23 +38,22 @@ export class UserService {
                 msg: '注册成功'
             }
         } catch(e) {
-            return {
-                code: 503,
-                msg: `Server error ${e}`
-            }
+            throw new HttpException({
+                message: '服务器发生错误，注册失败'
+            }, HttpStatus.SERVICE_UNAVAILABLE)
         }
     }
 
-    async findUser(username) {
-        const user = await getConnection()
-            .createQueryBuilder()
-            .select(['u.username', 'u.nickname', 'u.role'])
-            .from(User, 'u')
-            .leftJoinAndSelect("u.profile", "profile")
-            .where(`u.username = :username`, {username: username})
-            .getOne()
-        return user
-    }
+    // async findUser(username) {
+    //     const user = await getConnection()
+    //         .createQueryBuilder()
+    //         .select(['u.username', 'u.nickname', 'u.role'])
+    //         .from(User, 'u')
+    //         .leftJoinAndSelect("u.profile", "profile")
+    //         .where(`u.username = :username`, {username: username})
+    //         .getOne()
+    //     return user
+    // }
 
     async findOne(username) {
         return await this.userRepository.findOne({
@@ -94,27 +84,21 @@ export class UserService {
         return user.take(options.take || 10).getMany()
     }
 
-    async update(body) {
-        let root = join(__dirname, '../../', '/public')
-        let cover_target_path = join(__dirname, '../../', '/public/profile')
-        if (!fs.existsSync(cover_target_path)) {
-            fs.mkdir(cover_target_path, { recursive: true }, (err) => {
-                if (err) throw err;
-              });
-        }
-        let cover = body.cover
-        let avatar = body.avatar
-        let article = body.article
-
-        // await writeImage(root + cover, cover_target_path)
-        const reader = fs.createReadStream(root + cover)
-        const writer = fs.createWriteStream(cover_target_path + `/cover.png`)
-        reader.pipe(writer)
+    async update(body, user) {
+        let target = '/profile'
+        const { cover, avatar, article, summary } = body
+        const cover_path = await writeImage(cover, target)
+        const avatar_path = await writeImage(avatar, target)
         let profile = await getConnection()
             .createQueryBuilder()
             .update(Profile)
-            .set({cover})
-            .where("user_id=:id", {id: body.id})
+            .set({
+                cover: cover_path,
+                avatar: avatar_path,
+                article,
+                summary
+            })
+            .where("user_id=:id", {id: user.id})
             .execute()
         return profile
     }

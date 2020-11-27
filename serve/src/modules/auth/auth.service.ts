@@ -6,9 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private readonly usersService: UserService, private readonly jwtService: JwtService) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    console.log(user)
+  async validateUser(username: string, password?: string): Promise<any> {
+    const user = await this.usersService.findUser(username);
     if (user) {
       if (password === user.password) {
         return {
@@ -38,14 +37,19 @@ export class AuthService {
       return {
         code: 200,
         data: {
+          user: {
+            username: user.username,
+            nickname: user.nickname,
+            role: user.role,
+          },
           token,
         },
-        msg: `登录成功`,
+        message: `登录成功`,
       };
     } catch (error) {
       return {
         code: 600,
-        msg: `账号或密码错误`,
+        message: `账号或密码错误`,
       };
     }
   }

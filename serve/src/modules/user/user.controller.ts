@@ -1,19 +1,25 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { NoAuth } from 'src/common/decorator/noAuth';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Query, Request } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
-import { UserLoginDto } from './dto/user.login.dto';
 import { UserService } from './user.service'
 
 const userQuery = ['username', 'id']
 
 @Controller('user')
 export class UserController {
-    constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
-
+    constructor(
+        private readonly userService: UserService, 
+        private readonly authService: AuthService
+    ) {}
+    
+    //登录
     @Post('/login')
-    async login(@Body() req) {
-        const res = await this.authService.validateUser(req.username, req.password)
+    async login(@Body() body) {
+        if (!body.username || !body.password) {
+            throw new HttpException({
+                message: '用户名或密码不能为空'
+            }, HttpStatus.BAD_REQUEST)
+        }
+        const res = await this.authService.validateUser(body.username, body.password)
         switch (res.code) {
             case 0:
                 return await this.authService.certificate(res.user);
@@ -30,14 +36,20 @@ export class UserController {
         }
     }
 
+    //注册
     @Post('register')
-    async register(@Body() req) {
-        return await this.userService.register(req)
+    async register(@Body() body) {
+        if (!body.username || !body.password) {
+            throw new HttpException({
+                message: '用户名或密码不能为空'
+            }, HttpStatus.BAD_REQUEST)
+        }
+        return await this.userService.register(body)
     }
 
 
     @Get()
-    async findAll(@Query() q) {
+    async findAll(@Query() q, @Request() req) {
         let query = {}
         let res = []
         userQuery.forEach(item => {
@@ -58,8 +70,15 @@ export class UserController {
         return await this.userService.findUser(params.username)
     }
 
+    //更新
     @Put()
-    update(@Body() body) {
-        return this.userService.update(body)
+    update(@Body() body, @Request() req) {
+        return this.userService.update(body, req.user)
+    }
+    
+    //注销
+    @Post('logout')
+    loginout() {
+
     }
 }

@@ -16,6 +16,6 @@ import { jwtConstants } from './constants';
     forwardRef(() => UserModule)
   ],
   providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, JwtStrategy],
 })
 export class AuthModule {}
