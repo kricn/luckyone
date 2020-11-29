@@ -50,6 +50,7 @@ export class UserService {
     //         .select(['u.username', 'u.nickname', 'u.role'])
     //         .from(User, 'u')
     //         .leftJoinAndSelect("u.profile", "profile")
+    //         .leftJoinAndSelect('u.article', 'article')
     //         .where(`u.username = :username`, {username: username})
     //         .getOne()
     //     return user

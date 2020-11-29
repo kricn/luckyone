@@ -1,4 +1,5 @@
-import { PrimaryGeneratedColumn, Column, Entity, OneToOne } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, OneToOne, OneToMany, UpdateDateColumn, CreateDateColumn } from "typeorm";
+import { Article } from "./article.entity";
 import { Profile } from './profile.entity'
 @Entity()
 export class User {
@@ -17,12 +18,20 @@ export class User {
     @Column({length: 20})
     password: string;
 
-
-    @OneToOne(type => Profile, profile => profile.user)
-    profile: Profile
-
     @Column({
         default: 1
     })
     role: number;
+
+    @CreateDateColumn()
+    created_date: Date;
+
+    @UpdateDateColumn()
+    updated_date: Date;
+
+    @OneToOne(type => Profile, profile => profile.user)
+    profile: Profile
+
+    @OneToMany(type => Article, article => article.user)
+    article: Article[]
 }
