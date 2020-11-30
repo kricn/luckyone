@@ -1,6 +1,6 @@
 import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, JoinColumn, UpdateDateColumn, CreateDateColumn, OneToMany } from "typeorm";
 import { ArticleImg } from "./article_img.entity";
-import { Tag } from "./tag.entity";
+import { Tags } from "./tags.entity";
 import { User } from './user.entity'
 import { Comment } from './comment.entity'
 @Entity()
@@ -21,6 +21,9 @@ export class Article {
     content: string
 
     @Column()
+    words: string
+
+    @Column()
     views: number
 
     @Column()
@@ -39,8 +42,8 @@ export class Article {
     @OneToMany(type => ArticleImg, img => img.article)
     images: ArticleImg[]
 
-    @OneToMany(type => Tag, tag => tag.article)
-    tag: Tag[]
+    @OneToMany(type => Tags, tags => tags.article)
+    tags: Tags[]
 
     @OneToMany(type => Comment, comment => comment.article)
     comment: Comment[]

@@ -1,7 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
 import { Article } from './article.entity'
 @Entity()
-export class Tag {
+export class Tags {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -21,7 +21,7 @@ export class Tag {
     @UpdateDateColumn()
     updated_date: Date;
 
-    @ManyToOne(type => Article, article => article.tag)
+    @ManyToOne(type => Article, article => article.tags)
     @JoinColumn({name: 'article_id'})
     article: Article
 }
