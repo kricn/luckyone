@@ -5,24 +5,16 @@ export class Profile {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({
-        default: ""
-    })
+    @Column({nullable: true})
     avatar: string;
 
-    @Column({
-        default: ""
-    })
+    @Column({nullable: true})
     cover: string;
 
-    @Column({
-        default: ""
-    })
+    @Column({nullable:true})
     article: string
 
-    @Column({
-        default: ""
-    })
+    @Column({nullable: true})
     summary: string
     
     @CreateDateColumn()

@@ -11,6 +11,7 @@ import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { RoleGuard } from './common/auth/roles.guard';
 import { UploadModule } from './modules/upload/upload.module';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter'
+import { ArticleModule } from './modules/article/article.module';
 
 
 
@@ -27,7 +28,8 @@ import { HttpExceptionFilter } from './common/filter/http-exception.filter'
 
     UserModule,
     AuthModule,
-    UploadModule
+    UploadModule,
+    ArticleModule
   ],
   controllers: [AppController],
   providers: [

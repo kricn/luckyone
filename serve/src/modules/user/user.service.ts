@@ -90,7 +90,7 @@ export class UserService {
         const { cover, avatar, article, summary } = body
         const cover_path = await writeImage(cover, target)
         const avatar_path = await writeImage(avatar, target)
-        let profile = await getConnection()
+        await getConnection()
             .createQueryBuilder()
             .update(Profile)
             .set({
@@ -101,6 +101,6 @@ export class UserService {
             })
             .where("user_id=:id", {id: user.id})
             .execute()
-        return profile
+        return '修改成功'
     }
 }
