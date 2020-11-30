@@ -1,4 +1,6 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
+
+import { Button } from 'antd'
 
 class Home extends Component {
   constructor() {
@@ -9,7 +11,7 @@ class Home extends Component {
   render() {
     return  (
       <div className="home">
-          home
+          <Button type="primary">click</Button>
       </div>
     )
   }
