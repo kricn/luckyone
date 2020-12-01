@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD, APP_FILTER } from '@nestjs/core';
-import { RoleGuard } from './common/auth/roles.guard';
+import { RoleGuard } from './common/guard/roles.guard';
 import { UploadModule } from './modules/upload/upload.module';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter'
 import { ArticleModule } from './modules/article/article.module';

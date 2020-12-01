@@ -14,7 +14,7 @@ export class Article {
     @Column()
     cover: string
 
-    @Column()
+    @Column({nullable: true})
     summary: string
 
     @Column()
@@ -23,10 +23,10 @@ export class Article {
     @Column()
     words: string
 
-    @Column()
+    @Column({default: 0})
     views: number
 
-    @Column()
+    @Column({default: 0})
     liked: number
 
     @CreateDateColumn()

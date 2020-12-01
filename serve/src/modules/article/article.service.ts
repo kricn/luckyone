@@ -7,17 +7,17 @@ import { Article } from '../../entity/article.entity'
 @Injectable()
 export class ArticleService {
     constructor(
-        @InjectRepository(Article) private readonly userRepository: Repository<Article>,
+        @InjectRepository(Article) private readonly articleRepository: Repository<Article>,
     ){}
 
-    async addArticle(body) {
+    async addArticle(body, req) {
         const { title, content, summary, cover, words } = body
         return await getConnection()
             .createQueryBuilder()
             .insert()
             .into(Article)
             .values([
-                {title, content, summary, cover, words}
+                {title, content, summary, cover, words, user: req.user.id}
             ])
             .execute()
     }
