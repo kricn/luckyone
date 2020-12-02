@@ -1,6 +1,8 @@
 import { Component, Fragment } from 'react';
 
-import { Button } from 'antd'
+
+import LoginForm from './LoginForm'
+import RegisterForm from './ReigsterForm'
 
 class Login extends Component {
   constructor() {
@@ -11,7 +13,8 @@ class Login extends Component {
   render() {
     return  (
         <div>
-            login
+            <LoginForm></LoginForm>
+            <RegisterForm></RegisterForm>
         </div>
     )
   }
