@@ -12,37 +12,29 @@ class LoginForm extends Component {
     this.state = {}
   }
 
-  layout = {
-    labelCol: { span: 5 },
-    wrapperCol: { span: 19 },
-  }
-
   render() {
     return  (
         <Fragment>
             <Form
-              {...this.layout}
               className="login"
             >
 
               <Form.Item
-                label="用户名"
                 name="username"
                 rules={[ { required: true, message: '请输入用户名！' } ]}
               >
-                <Input />
+                <Input placeholder="用户名" />
               </Form.Item>
 
               <Form.Item
-                label="密码"
                 name="password"
                 rules={[ { required: true, message: '请输入密码！' } ]}
               >
-                <Input />
+                <Input placeholder="密码" />
               </Form.Item>
 
               <Form.Item>
-                <Button>登录</Button>
+                <Button type="primary" block>登录</Button>
               </Form.Item>
 
             </Form>
