@@ -1,20 +1,29 @@
-import { Component, Fragment } from 'react';
+import { Tabs } from 'antd';
+import { Component } from 'react';
 
 
 import LoginForm from './LoginForm'
-import RegisterForm from './ReigsterForm'
+import RegisterForm from './RegisterForm'
 
 class Login extends Component {
   constructor() {
     super()
-    this.state = {}
+    this.state = {
+      isLogin: false
+    }
   }
 
   render() {
     return  (
-        <div>
-            <LoginForm></LoginForm>
-            <RegisterForm></RegisterForm>
+        <div className="container">
+          <div class="form">
+            <Tabs></Tabs>
+            {
+              !this.isLogin ?
+                <LoginForm></LoginForm> :
+                <RegisterForm></RegisterForm>
+            }
+          </div>
         </div>
     )
   }

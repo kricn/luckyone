@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Login from './views/login/index'
@@ -11,7 +11,7 @@ class App extends Component {
 
   render() {
     return  (
-      <div>
+      <Fragment>
         <BrowserRouter>
           <Switch>
             <Route exact path="/">
@@ -20,7 +20,7 @@ class App extends Component {
             <Route component={Login} path="/login"></Route>
           </Switch>
         </BrowserRouter>
-      </div>
+      </Fragment>
     )
   }
 }

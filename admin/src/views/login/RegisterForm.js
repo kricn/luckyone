@@ -10,9 +10,9 @@ class RegisterForm extends Component {
 
   render() {
     return  (
-        <div>
+        <Fragment>
             RegisterForm
-        </div>
+        </Fragment>
     )
   }
 }
