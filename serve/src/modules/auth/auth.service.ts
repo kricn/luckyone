@@ -35,7 +35,7 @@ export class AuthService {
     try {
       const token = this.jwtService.sign(payload);
       return {
-        code: 200,
+        code: 0,
         data: {
           user: {
             username: user.username,

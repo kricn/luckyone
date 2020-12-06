@@ -4,7 +4,7 @@ import { UserService } from './user.service'
 
 const userQuery = ['username', 'id']
 
-@Controller('user')
+@Controller('admin/user')
 export class UserController {
     constructor(
         private readonly userService: UserService, 

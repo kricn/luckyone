@@ -2,7 +2,7 @@ import { Controller, Post, UseInterceptors ,UploadedFile, Body, UploadedFiles } 
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service'
 
-@Controller('upload')
+@Controller('article/upload')
 export class UploadController {
     constructor(
         private readonly uploadService: UploadService,

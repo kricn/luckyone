@@ -31,8 +31,8 @@ export class RoleGuard implements CanActivate {
   // }
 
   private whiteList: string[] = [
-    '/user/login',
-    '/user/register'
+    '/admin/user/login',
+    '/admin/user/register'
   ];
 
   private hasUrl(whiteList: string[], url: string): boolean {

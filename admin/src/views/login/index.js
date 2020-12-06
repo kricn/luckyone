@@ -1,9 +1,9 @@
 import { Tabs } from 'antd';
 import { Component } from 'react';
 
+import SignForm from '../../components/signForm'
 
-import LoginForm from './LoginForm'
-import RegisterForm from './RegisterForm'
+import './index.scss'
 
 const { TabPane } = Tabs;
 
@@ -21,10 +21,16 @@ class Login extends Component {
           <div className="form">
             <Tabs>
               <TabPane tab="登录" key="login">
-                <LoginForm></LoginForm>
+                <SignForm
+                  mode="login"
+                  btnTxt="登录"
+                />
               </TabPane>
               <TabPane tab="注册" key="register">
-                <RegisterForm></RegisterForm>
+                <SignForm
+                  mode="register"
+                  btnTxt="注册"
+                />
               </TabPane>
             </Tabs>
           </div>

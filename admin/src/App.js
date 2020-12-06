@@ -1,11 +1,14 @@
 import { Component, Fragment } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
+//自定义组件
 import Login from './views/login/index'
+import Index from './views/index/index'
+import PrivateRouter from './components/praviteRouter'
 
 class App extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {}
   }
 
@@ -14,10 +17,10 @@ class App extends Component {
       <Fragment>
         <BrowserRouter>
           <Switch>
-            <Route exact path="/">
-              <h1>this this home page.</h1>
-            </Route>
-            <Route component={Login} path="/login"></Route>
+            <Redirect path="/" exact to='/admin/statistic' />
+            <Redirect path='/admin' exact to='/admin/statistic' />
+            <Route exact path="/login" component={Login}></Route>
+            <PrivateRouter component={Index} path="/admin" />
           </Switch>
         </BrowserRouter>
       </Fragment>

@@ -3,7 +3,7 @@ import { ValidationPipe } from 'src/common/pipe/validation.pipe';
 import { ArticleService } from './article.service'
 import { ArticleAddDTO } from './dto/article.add.dto'
 
-@Controller('article')
+@Controller('admin/article')
 export class ArticleController {
     constructor(private readonly articleService: ArticleService){}
 

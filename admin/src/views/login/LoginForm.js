@@ -7,20 +7,39 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 //SCSS
 import './index.scss'
 
+//
+import { Login } from '../../api/accout.js'
+import SignForm from '../../components/signForm'
+
 class LoginForm extends Component {
   constructor() {
     super()
-    this.state = {}
+    this.state = {
+      loading: false
+    }
   }
 
   onFinish = values => {
-    console.log(values)
+    this.setState({
+      loading: true
+    })
+    Login(values).then(res => {
+    }).finally(() => {
+      this.setState({
+        loading: false
+      })
+    })
   }
 
   render() {
+    let { loading } = this.state
     return  (
         <Fragment>
-            <Form
+          <SignForm
+            mode="login"
+            btnTxt="登录"
+          />
+            {/* <Form
               className="login"
               onFinish={this.onFinish}
             >
@@ -40,10 +59,10 @@ class LoginForm extends Component {
               </Form.Item>
 
               <Form.Item>
-                <Button type="primary" htmlType="submit" block>登录</Button>
+                <Button type="primary" htmlType="submit" block loading={loading}>登录</Button>
               </Form.Item>
 
-            </Form>
+            </Form> */}
         </Fragment>
     )
   }
