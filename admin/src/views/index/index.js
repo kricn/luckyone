@@ -1,22 +1,17 @@
-import React, { Component } from 'react'
+import React, { Suspense, memo } from 'react';
+import { renderRoutes } from 'react-router-config';
 
-import { Layout } from 'antd'
+import { Layout, Spin } from 'antd';
 
 //自定义组件
 import Aside from './components/aside'
-import ContainerMain from '../../components/containerMain'
 
 import './index.scss'
 
 const { Header, Sider, Content } = Layout
 
-class Index extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
-
-  render() {
+export default memo (function Index ( props ) {
+  const { route } = props
     return (
       <Layout className="layout_wrap">
         <Sider
@@ -27,12 +22,11 @@ class Index extends Component {
         <Layout>
           <Header className="layout_header">头部</Header>
           <Content className="layout_content">
-            <ContainerMain />
+            <Suspense fallback={ <div>loading...</div> }>
+              { renderRoutes(route.routes) }
+            </Suspense>
           </Content>
         </Layout>
       </Layout>
     )
-  }
-}
-
-export default Index;
+})

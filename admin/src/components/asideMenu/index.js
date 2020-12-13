@@ -22,8 +22,18 @@ class AsideMenu extends Component {
     })
   }
 
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { pathname } = nextProps.location
+    this.setState({
+      selectedKey: pathname
+    })
+  }
+
   //渲染菜单
   renderMenu = ({ meta, path }) => {
+    if (!meta) {
+      return false;
+    }
     return (
       <Menu.Item key={path} icon={React.createElement(meta.icon)}>
         <Link to={path}>{meta.title}</Link>

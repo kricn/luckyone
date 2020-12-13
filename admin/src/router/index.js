@@ -1,18 +1,16 @@
-import Loadable from './loadable.js'
+import { Redirect } from 'react-router-dom'
+
+import Index from '@/views/index'
+
+import menu from './menu'
 
 const router = [
+  { path: '/', exact: true, render: () => <Redirect to='/alian' /> },
   {
-    path: '/',
-    redirect: true
+    path: '/alian',
+    component: Index,
+    routes: menu
   },
-  {
-    path: '/admin',
-    redirect: true
-  },
-  {
-    path: '/login',
-    component: Loadable(() => import('../views/login'))
-  }
 ]
 
 export default router
