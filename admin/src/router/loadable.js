@@ -1,3 +1,5 @@
+//懒加载
+
 import Loadable from 'react-loadable'
 import { Spin } from 'antd'
 

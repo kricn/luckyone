@@ -21,12 +21,6 @@ class App extends Component {
       <Fragment>
         <BrowserRouter>
           { renderRoutes(router) }
-          {/* <Switch>
-            <Redirect path="/" exact to='/admin/statistic' />
-            <Redirect path='/admin' exact to='/admin/statistic' />
-            <Route exact path="/login" component={Login}></Route>
-            <PrivateRouter component={Index} path="/admin" />
-          </Switch> */}
         </BrowserRouter>
       </Fragment>
     )

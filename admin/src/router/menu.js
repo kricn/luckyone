@@ -3,18 +3,17 @@ import { lazy } from 'react';
 import {
   BarChartOutlined
 } from '@ant-design/icons';
-import { Redirect } from 'react-router';
 
+import { Redirect } from 'react-router';
+import LazyLoad from './loadable'
+
+import Home from '@/views/statistic/index'
+import Login from '@/views/login/index'
 
 const menu = [
   {
-    path: '/alian',
-    exact: true,
-    render: () => <Redirect to='/alian/home' />
-  },
-  {
     path: '/alian/home',
-    component: lazy(() => import('@/views/statistic/index')),
+    component: LazyLoad(Home),
     exact: true,
     meta: {
       title: '分析',
@@ -23,7 +22,7 @@ const menu = [
   },
   {
     path: '/alian/test',
-    component: lazy(() => import('@/views/login/index')),
+    component: LazyLoad(Login),
     exact: true,
     meta: {
       title: 'test',

@@ -1,5 +1,4 @@
 import React, { Suspense, memo } from 'react';
-import { renderRoutes } from 'react-router-config';
 
 import { Layout, Spin } from 'antd';
 
@@ -22,9 +21,7 @@ export default memo (function Index ( props ) {
         <Layout>
           <Header className="layout_header">头部</Header>
           <Content className="layout_content">
-            <Suspense fallback={ <div>loading...</div> }>
-              { renderRoutes(route.routes) }
-            </Suspense>
+            
           </Content>
         </Layout>
       </Layout>
