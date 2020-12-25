@@ -3,7 +3,7 @@ import { ArticleService } from './article.service';
 import { ArticleController } from './article.controller';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Article } from '../../entity/article.entity'
+import { Article } from '../../../entity/article.entity'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Article])],

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection  } from 'typeorm';
 
-import { Article } from '../../entity/article.entity'
+import { Article } from '../../../entity/article.entity'
 
 @Injectable()
 export class ArticleService {
@@ -20,5 +20,12 @@ export class ArticleService {
                 {title, content, summary, cover, words, user: req.user.id}
             ])
             .execute()
+    }
+
+    async getArticleList(params) {
+        return await this.articleRepository
+            .createQueryBuilder('article')
+            .leftJoinAndSelect('article.user', 'user')
+            .getMany()
     }
 }

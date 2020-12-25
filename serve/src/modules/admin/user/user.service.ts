@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable, Put } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection  } from 'typeorm';
-import {User} from '../../entity/user.entity';
-import { Profile } from '../../entity/profile.entity'
-import { writeImage } from '../../utils/common'
+import {User} from '../../../entity/user.entity';
+import { Profile } from '../../../entity/profile.entity'
+import { writeImage } from '../../../utils/common'
 
 @Injectable()
 export class UserService {

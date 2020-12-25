@@ -9,7 +9,7 @@ export class ArticleController {
 
     @Get()
     getArticle(@Query() query) {
-        return '获取成功'
+        return this.articleService.getArticleList(query)
     }
 
     @Get('/:id')

@@ -5,13 +5,13 @@ import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './modules/user/user.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/admin/user/user.module';
+import { AuthModule } from './modules/admin/auth/auth.module';
 import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { RoleGuard } from './common/guard/roles.guard';
-import { UploadModule } from './modules/upload/upload.module';
+import { UploadModule } from './modules/admin/upload/upload.module';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter'
-import { ArticleModule } from './modules/article/article.module';
+import { ArticleModule } from './modules/admin/article/article.module';
 
 
 
