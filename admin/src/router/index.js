@@ -1,22 +1,34 @@
 import { Redirect } from 'react-router-dom'
 
-import Index from '@/views/index'
-import Login from '@/views/login'
-
-import menu from './menu'
+import LazyLoad from './loadable'
 
 const router = [
-  { path: '/', exact: true, render: () => <Redirect to='/alian/home' /> },
-  { path: '/alian', exact: true, render: () => <Redirect to='/alian/home' /> },
+  { 
+    path: '/', 
+    exact: true, 
+    render: () => <Redirect to='/alian/home' /> 
+  },
+  { 
+    path: '/alian', 
+    exact: true, 
+    render: () => <Redirect to='/alian/home' /> 
+  },
   {
     path: '/alian',
-    component: Index,
-    routes: menu
+    // exact: true,
+    component: LazyLoad(() => import('@/views/index')),
+    meta: {
+      auth: true
+    }
   },
   {
   	path: '/login',
   	exact: true,
-  	component: Login
+  	component: LazyLoad(() => import('@/views/login'))
+  },
+  {
+    path: '*',
+    render: () => <div>404</div>
   }
 ]
 

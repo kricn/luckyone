@@ -1,32 +1,33 @@
-import { lazy } from 'react';
+import { Redirect } from 'react'
+
 //图标
 import {
   BarChartOutlined
 } from '@ant-design/icons';
 
-import { Redirect } from 'react-router';
 import LazyLoad from './loadable'
-
-import Home from '@/views/statistic/index'
-import Login from '@/views/login/index'
 
 const menu = [
   {
     path: '/alian/home',
-    component: LazyLoad(Home),
+    component: LazyLoad(() => import('@/views/Home')),
     exact: true,
     meta: {
       title: '分析',
-      icon: BarChartOutlined
+      icon: BarChartOutlined,
+      auth: true,
+      role: ['user', 'admin']
     }
   },
   {
-    path: '/alian/test',
-    component: LazyLoad(Login),
+    path: '/alian/setting',
+    component: LazyLoad(() => import('@/views/setting')),
     exact: true,
     meta: {
-      title: 'test',
-      icon: BarChartOutlined
+      title: 'setting',
+      icon: BarChartOutlined,
+      auth: true,
+      role: ['admin']
     }
   }
 ]
