@@ -23,9 +23,13 @@ export class ArticleService {
     }
 
     async getArticleList(params) {
+        console.log(params)
         return await this.articleRepository
             .createQueryBuilder('article')
-            .leftJoinAndSelect('article.user', 'user')
+            .leftJoinAndSelect('article.user', 'user', 'user.id = :id', {id: params.user.id})
+            .leftJoinAndSelect('article.images', 'images')
+            .leftJoinAndSelect('article.tags', 'tags')
+            .leftJoinAndSelect('article.comment', 'comment')
             .getMany()
     }
 }

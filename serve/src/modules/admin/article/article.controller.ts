@@ -8,7 +8,8 @@ export class ArticleController {
     constructor(private readonly articleService: ArticleService){}
 
     @Get()
-    getArticle(@Query() query) {
+    getArticle(@Query() query, @Request() req) {
+        query.user = req.user
         return this.articleService.getArticleList(query)
     }
 
