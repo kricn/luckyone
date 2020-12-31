@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, Request, Req } from '@nestjs/common';
 import { ValidationPipe } from 'src/common/pipe/validation.pipe';
 import { ArticleService } from './article.service'
 import { ArticleAddDTO } from './dto/article.add.dto'
@@ -14,20 +14,20 @@ export class ArticleController {
     }
 
     @Get('/:id')
-    getArticleDetail(@Param() param) {
-        return '获取成功'
+    async getArticleDetail(@Param() param: {id: string, user?: any}, @Request() req) {
+        param.user = req.user
+        return await this.articleService.getArticleDetail(param)
     }
 
     @Post()
     @UsePipes(ValidationPipe)
     async addArticle(@Body() body: ArticleAddDTO, @Request() req) {
-        // const { title, content, summary, cover, words } = body
-        return await this.articleService.addArticle(body, req)
-        return '添加成功'
+        body.user = Object.assign({}, req.user)
+        return await this.articleService.addArticle(body)
     }
 
     @Put('/:id')
-    modifyArticle(@Body() body) {
+    modifyArticle(@Param() param: {id: string}, @Body() body: ArticleAddDTO) {
         return '修改成功'
     }
 

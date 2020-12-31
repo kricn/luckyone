@@ -1,4 +1,4 @@
-import { IsNotIn, IS_ALPHA } from 'class-validator';
+import { IsNotIn } from 'class-validator';
 
 export class ArticleAddDTO {
 
@@ -13,4 +13,10 @@ export class ArticleAddDTO {
 
     @IsNotIn(['', null, undefined], {message: '字数不能为空'})
     words: string
+
+    user?: any
+
+    images?: string[]
+
+    tags?: any
 }

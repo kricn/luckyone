@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToMany, JoinTable } from "typeorm";
 import { Article } from './article.entity'
 @Entity()
 export class Tags {
@@ -21,7 +21,7 @@ export class Tags {
     @UpdateDateColumn()
     updated_date: Date;
 
-    @ManyToOne(type => Article, article => article.tags)
-    @JoinColumn({name: 'article_id'})
-    article: Article
+    @ManyToMany(type => Article, articles => articles.tags)
+    @JoinTable()
+    articles: Article[]
 }

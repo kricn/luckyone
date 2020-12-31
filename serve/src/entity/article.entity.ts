@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, JoinColumn, UpdateDateColumn, CreateDateColumn, OneToMany } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, JoinColumn, UpdateDateColumn, CreateDateColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { ArticleImg } from "./article_img.entity";
 import { Tags } from "./tags.entity";
 import { User } from './user.entity'
@@ -29,6 +29,9 @@ export class Article {
     @Column({default: 0})
     liked: number
 
+    @Column({default: 1})
+    isShow: number
+
     @CreateDateColumn()
     created_date: Date;
 
@@ -42,7 +45,7 @@ export class Article {
     @OneToMany(type => ArticleImg, img => img.article)
     images: ArticleImg[]
 
-    @OneToMany(type => Tags, tags => tags.article)
+    @ManyToMany(type => Tags, tags => tags.articles)
     tags: Tags[]
 
     @OneToMany(type => Comment, comment => comment.article)
