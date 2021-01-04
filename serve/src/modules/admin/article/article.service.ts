@@ -98,13 +98,18 @@ export class ArticleService {
                 filterParams[key] = query[key]
             }
         })
-        let queryLen = 0
         
-        //差点判断
+        let queryLen = 0
+        for (let key in query) {
+            console.log()
+            if (only.indexOf(key) >= 0 ) {
+                queryLen += 1
+            }
+        }
 
-        let sql = queryLen <= 0 ? '1-1' :
+        let sql = queryLen <= 0 ? '' :
                   `article.title like :keyword or article.id=:id or tags.id in (:...tags)`
-
+        console.log(sql)
         const res = await this.articleRepository
             .createQueryBuilder('article')
             .leftJoin('article.user', 'user', 'user.id = :id', {id: user.id})
