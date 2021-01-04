@@ -8,6 +8,8 @@ export class ArticleAddDTO {
     @IsNotIn(['', undefined, null], {message: '内容不能为空'})
     content: string;
 
+    summary: string;
+
     @IsNotIn(['', null, undefined], {message: '图片路径不能为空'})
     cover: string
 

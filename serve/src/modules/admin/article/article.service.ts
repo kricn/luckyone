@@ -3,9 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { writeImage } from 'src/utils/common';
 import { Repository, getConnection  } from 'typeorm';
 
+//entity
 import { Article } from '../../../entity/article.entity'
 import { ArticleImg } from '../../../entity/article_img.entity'
 import { Tags } from '../../../entity/tags.entity'
+
+//dto
+import { ArticleAddDTO } from './dto/article.add.dto'
+
+//interface
+import { Result } from '../../../common/interface/result.interface'
+import { ArticleGetDTO } from './dto/article.get.dto';
+import { on } from 'process';
 
 @Injectable()
 export class ArticleService {
@@ -16,7 +25,7 @@ export class ArticleService {
     ){}
 
     //添加文章
-    async addArticle(body) {
+    async addArticle(body: ArticleAddDTO): Promise<Result> {
         const { title, content, summary, cover, words, user, images, tags } = body
         let imagesPath = '/article'
 
@@ -34,23 +43,36 @@ export class ArticleService {
         article.words = words
         article.user = user.id
 
-        await this.articleRepository.save(article)
+        try {
+          await this.articleRepository.save(article)  
+        } catch {
+            return {
+                code: -1,
+                msg: '创建文章失败！'
+            }
+        }
+        try {
+            tempImages.forEach(async item => {
+                let articleImgEntity = new ArticleImg()
+                articleImgEntity.title = title
+                articleImgEntity.url = item
+                articleImgEntity.article = article
+                await this.articleImgRepository.save(articleImgEntity)
+            })
 
-        tempImages.forEach(async item => {
-            let articleImgEntity = new ArticleImg()
-            articleImgEntity.title = title
-            articleImgEntity.url = item
-            articleImgEntity.article = article
-            await this.articleImgRepository.save(articleImgEntity)
-        })
-
-        tags.forEach(async item => {
-            const tagsEntity = new Tags()
-            tagsEntity.title = title
-            tagsEntity.name = item
-            tagsEntity.articles = [article]
-            await this.tagsRepository.save(tagsEntity)
-        })
+            tags.forEach(async item => {
+                const tagsEntity = new Tags()
+                tagsEntity.title = title
+                tagsEntity.name = item
+                tagsEntity.articles = [article]
+                await this.tagsRepository.save(tagsEntity)
+            })
+        } catch {
+            return {
+                code: -1,
+                msg: '图片或标签写入失败！'
+            }
+        }
         return {
             code: 0,
             msg: 'success'
@@ -58,14 +80,48 @@ export class ArticleService {
     }
 
     //获取文章列表
-    async getArticleList(params) {
-        return await this.articleRepository
+    async getArticleList(
+        user: any,
+        query?: any,
+        offset?: number,
+        limit?: number,
+        sort?: number,
+    ): Promise<Result> {
+        const only = ['keyword', 'id', 'tags']
+        let filterParams = {}
+        only.forEach(key => {
+            if (key === 'tags') {
+                filterParams[key] = query[key]?query[key].split(','):undefined
+            } else if (key === 'keyword') {
+                filterParams[key] = query[key] && `%${query[key]}%`
+            } else {
+                filterParams[key] = query[key]
+            }
+        })
+        let queryLen = 0
+        
+        //差点判断
+
+        let sql = queryLen <= 0 ? '1-1' :
+                  `article.title like :keyword or article.id=:id or tags.id in (:...tags)`
+
+        const res = await this.articleRepository
             .createQueryBuilder('article')
-            .leftJoinAndSelect('article.user', 'user', 'user.id = :id', {id: params.user.id})
+            .leftJoin('article.user', 'user', 'user.id = :id', {id: user.id})
             .leftJoinAndSelect('article.images', 'images')
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
-            .getMany()
+            .where(sql, filterParams)
+            .skip(offset || 0)
+            .take(limit || 10)
+            .orderBy('article.created_date', !sort?'ASC':'DESC')
+            // .getSql()
+            .getManyAndCount()
+        return {
+            code: 0,
+            msg: 'success',
+            data: res
+        }
     }
 
     //获取文章详情
