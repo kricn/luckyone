@@ -15,10 +15,14 @@ export class Tags {
     })
     title: string
 
-    @CreateDateColumn()
+    @CreateDateColumn({
+        select: false
+    })
     created_date: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({
+        select: false
+    })
     updated_date: Date;
 
     @ManyToMany(type => Article, articles => articles.tags)

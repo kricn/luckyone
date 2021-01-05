@@ -13,8 +13,6 @@ import { ArticleAddDTO } from './dto/article.add.dto'
 
 //interface
 import { Result } from '../../../common/interface/result.interface'
-import { ArticleGetDTO } from './dto/article.get.dto';
-import { on } from 'process';
 
 @Injectable()
 export class ArticleService {
@@ -79,6 +77,52 @@ export class ArticleService {
         }
     }
 
+    //切换文章显示隐藏
+    async switchArticleList(id: number, is_show: number): Promise<Result> {
+
+        if (is_show > 0) {
+            is_show = 1
+        } else {
+            is_show = 0
+        }
+
+        let articleCount = await this.articleImgRepository.findAndCount({id})
+        
+        if (!articleCount[1]) {
+            return {
+                code: -1,
+                msg: '未找到该文章'
+            }
+        }
+
+        await this.articleRepository
+            .createQueryBuilder('article')
+            .update()
+            .set({is_show: is_show})
+            .where('article.id=:id', {id: id})
+            .execute()
+
+        return {
+            code: 0,
+            msg: is_show === 1 ? 'showed' : 'hidden'
+        }
+    }
+
+    //删除文章
+    async deleteArticle(id: number): Promise<Result> {
+
+        await this.articleRepository
+            .createQueryBuilder('article')
+            .delete()
+            .where('article.id=:id', {id})
+            .execute()
+
+        return {
+            code: 0,
+            msg: 'delete successful'
+        }
+    }
+
     //获取文章列表
     async getArticleList(
         user: any,
@@ -87,7 +131,7 @@ export class ArticleService {
         limit?: number,
         sort?: number,
     ): Promise<Result> {
-        const only = ['keyword', 'id', 'tags']
+        const only = ['keyword', 'id', 'tags', 'is_show']
         let filterParams = {}
         only.forEach(key => {
             if (key === 'tags') {
@@ -99,17 +143,21 @@ export class ArticleService {
             }
         })
         
-        let queryLen = 0
+        let queryLen = false
         for (let key in query) {
-            console.log()
-            if (only.indexOf(key) >= 0 ) {
-                queryLen += 1
+            if (only.indexOf(key) >= 0 && query[key] && !queryLen) {
+                queryLen = true
             }
         }
 
-        let sql = queryLen <= 0 ? '' :
-                  `article.title like :keyword or article.id=:id or tags.id in (:...tags)`
-        console.log(sql)
+        let sql = !queryLen ? '' :
+                  `
+                    article.title like :keyword 
+                    or article.id=:id 
+                    or tags.id in (:...tags) 
+                    or is_show=:is_show
+                  `
+
         const res = await this.articleRepository
             .createQueryBuilder('article')
             .leftJoin('article.user', 'user', 'user.id = :id', {id: user.id})
@@ -119,13 +167,16 @@ export class ArticleService {
             .where(sql, filterParams)
             .skip(offset || 0)
             .take(limit || 10)
-            .orderBy('article.created_date', !sort?'ASC':'DESC')
+            .orderBy('article.created_date', sort?'ASC':'DESC')
             // .getSql()
             .getManyAndCount()
         return {
             code: 0,
             msg: 'success',
-            data: res
+            data: {
+                list: res[0],
+                total: res[1]
+            }
         }
     }
 

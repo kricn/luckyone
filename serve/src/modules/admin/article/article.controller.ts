@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, Request, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, Request, Req, Delete } from '@nestjs/common';
 import { ValidationPipe } from 'src/common/pipe/validation.pipe';
 import { ArticleService } from './article.service'
 
@@ -38,9 +38,23 @@ export class ArticleController {
         return await this.articleService.addArticle(body)
     }
 
+    //切换文章状态
+    @Put('/:id')
+    async switchArticleShow(@Param('id') id: number, @Body('is_show') is_show: number) {
+        return await this.articleService.switchArticleList(id, is_show)
+    }
+
+    //删除文章
+    //外键约束会删除失败
+    // @Delete('/:id')
+    // async deleteArticle(@Param('id') id: number) {
+    //     return await this.articleService.deleteArticle(id)
+    // }
+
     //修改文章
     @Put('/:id')
-    modifyArticle(@Param() param: {id: string}, @Body() body: ArticleAddDTO) {
+    @UsePipes(ValidationPipe)
+    modifyArticle(@Param('id') param: {id: string}, @Body() body: ArticleAddDTO) {
         return '修改成功'
     }
 

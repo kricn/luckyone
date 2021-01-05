@@ -30,7 +30,7 @@ export class Article {
     liked: number
 
     @Column({default: 1})
-    isShow: number
+    is_show: number
 
     @CreateDateColumn()
     created_date: Date;

@@ -11,10 +11,14 @@ export class ArticleImg {
     @Column()
     title: string
 
-    @CreateDateColumn()
+    @CreateDateColumn({
+        select: false
+    })
     created_date: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({
+        select: false
+    })
     updated_date: Date;
 
     @ManyToOne(type => Article, article => article.images)
