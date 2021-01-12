@@ -11,9 +11,10 @@ export class Tags {
     name: string
 
     @Column({
-        comment: '文章标题'
+        comment: '标签是否可用',
+        default: 1
     })
-    title: string
+    available: number
 
     @CreateDateColumn({
         select: false
@@ -25,7 +26,8 @@ export class Tags {
     })
     updated_date: Date;
 
-    @ManyToMany(type => Article, articles => articles.tags)
-    @JoinTable()
+    @ManyToMany(type => Article, articles => articles.tags, {
+        onDelete: 'NO ACTION'
+    })
     articles: Article[]
 }

@@ -32,6 +32,8 @@ export class User {
     @OneToOne(type => Profile, profile => profile.user)
     profile: Profile
 
-    @OneToMany(type => Article, article => article.user)
+    @OneToMany(type => Article, article => article.user, {
+        onDelete: 'SET NULL'
+    })
     article: Article[]
 }

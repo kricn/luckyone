@@ -46,6 +46,7 @@ export class Article {
     images: ArticleImg[]
 
     @ManyToMany(type => Tags, tags => tags.articles)
+    @JoinTable()
     tags: Tags[]
 
     @OneToMany(type => Comment, comment => comment.article)

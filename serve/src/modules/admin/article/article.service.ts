@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { writeImage } from 'src/utils/common';
-import { Repository, getConnection  } from 'typeorm';
+import { Repository, getConnection, getManager  } from 'typeorm';
 
 //entity
 import { Article } from '../../../entity/article.entity'
@@ -28,7 +28,7 @@ export class ArticleService {
         let imagesPath = '/article'
 
         let tempImages = []
-        images.forEach(async img => {
+        images && images.forEach(async img => {
             tempImages.push(await writeImage(img, imagesPath))
         })
         let tempCover = await writeImage(cover, imagesPath)
@@ -40,6 +40,11 @@ export class ArticleService {
         article.cover = tempCover
         article.words = words
         article.user = user.id
+        article.tags = await this.tagsRepository
+                                 .createQueryBuilder('i')
+                                 .where('i.id in (:...id)', {id: tags})
+                                 .getMany()
+        
 
         try {
           await this.articleRepository.save(article)  
@@ -50,20 +55,12 @@ export class ArticleService {
             }
         }
         try {
-            tempImages.forEach(async item => {
+            tempImages.length > 0 && tempImages.forEach(async item => {
                 let articleImgEntity = new ArticleImg()
                 articleImgEntity.title = title
                 articleImgEntity.url = item
                 articleImgEntity.article = article
                 await this.articleImgRepository.save(articleImgEntity)
-            })
-
-            tags.forEach(async item => {
-                const tagsEntity = new Tags()
-                tagsEntity.title = title
-                tagsEntity.name = item
-                tagsEntity.articles = [article]
-                await this.tagsRepository.save(tagsEntity)
             })
         } catch {
             return {
@@ -71,6 +68,7 @@ export class ArticleService {
                 msg: '图片或标签写入失败！'
             }
         }
+
         return {
             code: 0,
             msg: 'success'

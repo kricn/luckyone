@@ -12,6 +12,7 @@ import { RoleGuard } from './common/guard/roles.guard';
 import { UploadModule } from './modules/admin/upload/upload.module';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter'
 import { ArticleModule } from './modules/admin/article/article.module';
+import { TagsModule } from './modules/admin/tags/tags.module';
 
 
 
@@ -29,7 +30,8 @@ import { ArticleModule } from './modules/admin/article/article.module';
     UserModule,
     AuthModule,
     UploadModule,
-    ArticleModule
+    ArticleModule,
+    TagsModule
   ],
   controllers: [AppController],
   providers: [

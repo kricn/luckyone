@@ -46,10 +46,10 @@ export class ArticleController {
 
     //删除文章
     //外键约束会删除失败
-    // @Delete('/:id')
-    // async deleteArticle(@Param('id') id: number) {
-    //     return await this.articleService.deleteArticle(id)
-    // }
+    @Delete('/:id')
+    async deleteArticle(@Param('id') id: number) {
+        return await this.articleService.deleteArticle(id)
+    }
 
     //修改文章
     @Put('/:id')

@@ -17,7 +17,9 @@ export class Comment {
     @UpdateDateColumn()
     updated_date: Date;
 
-    @ManyToOne(type => Article, article => article.comment)
+    @ManyToOne(type => Article, article => article.comment, {
+        onDelete: 'CASCADE'
+    })
     @JoinColumn({name: 'article_id'})
     article: Article
 }

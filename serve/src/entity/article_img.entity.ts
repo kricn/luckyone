@@ -21,7 +21,9 @@ export class ArticleImg {
     })
     updated_date: Date;
 
-    @ManyToOne(type => Article, article => article.images)
+    @ManyToOne(type => Article, article => article.images, {
+        onDelete: 'CASCADE'
+    })
     @JoinColumn({name: 'article_id'})
     article: Article
 }
