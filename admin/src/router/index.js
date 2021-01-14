@@ -15,7 +15,6 @@ const router = [
   },
   {
     path: '/alian',
-    // exact: true,
     component: LazyLoad(() => import('@/views/index')),
     meta: {
       auth: true
@@ -24,7 +23,7 @@ const router = [
   {
   	path: '/login',
   	exact: true,
-  	component: LazyLoad(() => import('@/views/login'))
+  	component: LazyLoad(() => import('@/views/Login'))
   },
   {
     path: '*',

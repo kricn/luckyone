@@ -8,6 +8,7 @@ import './index.scss'
 import logo from '@/image/yz.jpg'
 
 
+const { SubMenu } = Menu
 class Aside extends Component {
   constructor(props) {
     super(props)
@@ -23,7 +24,7 @@ class Aside extends Component {
     const { menu } = this.props
     this.setState({
       selectedKey: pathname,
-      menu
+      menu: this.filterRoutes(menu)
     })
   }
 
@@ -34,16 +35,37 @@ class Aside extends Component {
     })
   }
 
+  //过滤动态路由
+  filterRoutes = routes => {
+    return routes.filter(item => {
+      return !item.path.includes(':')
+    })
+  }
+
   //渲染菜单
-  renderMenu = ({ meta, path }) => {
+  renderMenu = ({ meta, path, children }) => {
     if (!meta) {
       return false;
     }
-    return (
-      <Menu.Item key={path} icon={React.createElement(meta.icon)}>
-        <Link to={path}>{meta.title}</Link>
-      </Menu.Item>
-    )
+    console.log(children)
+    return children && children.length > 0 ? 
+      (
+        <SubMenu key={path} title={meta.title} icon={React.createElement(meta.icon)}>
+          {
+            children.map(i => {
+              return (<Menu.Item key={i.path}>
+                <Link to={i.path}>{i.meta.title}</Link>
+              </Menu.Item>)
+            })
+          }
+        </SubMenu>
+      )
+      : 
+      (
+        <Menu.Item key={path} icon={React.createElement(meta.icon)}>
+          <Link to={path}>{meta.title}</Link>
+        </Menu.Item>
+      )
   }
 
   //选择菜单

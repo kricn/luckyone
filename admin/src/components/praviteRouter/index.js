@@ -5,13 +5,11 @@ import { Redirect, Route} from 'react-router-dom'
 import { getToken } from '../../utils/session.js'
 
 const  PrivateRouter = (props) => {
-  const { meta, ...route } = props
+  const { meta, children, ...route } = props
   if (meta && meta.auth) {
-  	if (getToken()) {
-		  return <Route {...route} />		
-  	} else {
-  		return <Redirect to="/login" />
-  	}
+	return getToken() ? 
+		<Route {...route} /> : 
+		<Redirect to="/login" />
   } else {
   	return <Route {...route} />
   }

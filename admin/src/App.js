@@ -1,8 +1,8 @@
-import { Component, Fragment, Suspense } from 'react';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
-import { renderRoutes } from 'react-router-config';
+import { Component, Fragment } from 'react';
+import { BrowserRouter, Switch } from 'react-router-dom';
+// import { renderRoutes } from 'react-router-config';
 
-import { Spin } from 'antd';
+import {  } from 'antd';
 
 //自定义组件
 import PrivateRouter from './components/praviteRouter'

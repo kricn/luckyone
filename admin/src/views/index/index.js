@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {  Switch } from 'react-router-dom';
 
 import { Layout } from 'antd';
 
@@ -8,13 +9,13 @@ import menu from '@/router/menu'
 import Aside from './components/aside'
 import PrivateRouter from '@/components/praviteRouter'
 
-import { getToken } from '../../utils/session.js'
+import { getRole } from '../../utils/session.js'
 
 import './index.scss'
 
 const { Header, Sider, Content } = Layout
 
-export default class extends Component {
+export default class Index extends Component {
 
   constructor() {
     super()
@@ -27,16 +28,26 @@ export default class extends Component {
   componentDidMount() {
     //模拟异步请求
     //可以设置一个loading来处理异步请求
-    const role = getToken()
     this.setState({
-      menu: menu.filter(i => {
-        if (!i.meta.auth || !i.meta.role) {
-          return true
-        } else {
-          return i.meta.role.indexOf(role) > -1
-        }
-      }),
+      menu: this.filterRoutes(menu),
       loading: false
+    })
+  }
+
+  //过滤路由注册
+  filterRoutes = routes => {
+    const role = getRole('role')
+    return routes.filter(item => {
+      return !item.meta || !item.meta.role || item.meta.role.indexOf(role) !== -1
+    })
+  }
+
+  //渲染路由
+  renderRoutes = routes => {
+    return routes.map(route => {
+      return route.children && route.children.length > 0 ?
+        this.renderRoutes(route.children) :
+        <PrivateRouter key={route.path} {...route} />
     })
   }
 
@@ -56,11 +67,11 @@ export default class extends Component {
           <Layout>
             <Header className="layout_header">头部</Header>
             <Content className="layout_content">
-              {
-                this.state.menu.map(route => {
-                  return <PrivateRouter key={route.path} {...route} />
-                })
-              }
+              <Switch>
+                {
+                  this.renderRoutes(this.state.menu)
+                }
+              </Switch>
             </Content>
           </Layout>
         </Layout>
