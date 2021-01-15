@@ -14,7 +14,7 @@ const loadingComponent = () => {
   </div>;
 };
 
-export default (loader, loading=loadingComponent) => {
+export default function LazyLoad(loader, loading=loadingComponent) {
   return Loadable({
     loader,
     loading

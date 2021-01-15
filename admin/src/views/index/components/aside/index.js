@@ -47,7 +47,6 @@ class Aside extends Component {
     if (!meta) {
       return false;
     }
-    console.log(children)
     return children && children.length > 0 ? 
       (
         <SubMenu key={path} title={meta.title} icon={React.createElement(meta.icon)}>

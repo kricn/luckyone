@@ -1,4 +1,4 @@
-import API from '../../src/utils/request.js';
+import API from '../utils/request.js';
 
 //登录
 export function Login (data) {

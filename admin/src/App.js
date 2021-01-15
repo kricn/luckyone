@@ -7,6 +7,7 @@ import {  } from 'antd';
 //自定义组件
 import PrivateRouter from './components/praviteRouter'
 import router from '@/router/index'
+import store from '@/store'
 
 class App extends Component {
   constructor(props) {

@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 
-export default class extends Component {
+class Setting extends Component {
 	constructor(props) {
 		super(props)
+		this.state = {}
 	}
 
 	render() {
 		return <div>setting</div>
 	}
 }
+
+export default Setting
