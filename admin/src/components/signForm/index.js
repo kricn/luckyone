@@ -43,7 +43,7 @@ class SignForm extends Component {
             Login(values).then(res => {
                 setToken(res.data.token)
                 res.data.user.role === 1 ? setRole('admin') : setRole('user')
-                store.dispatch({type: 'LOGIN', payload: true})
+                store.dispatch({type: 'LOGIN', payload: '1'})
                 this.props.history.push('/')
             }).catch(err => {
                 

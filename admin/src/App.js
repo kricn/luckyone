@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 // import { renderRoutes } from 'react-router-config';
 
@@ -12,17 +12,33 @@ import store from '@/store'
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      isAuth: sessionStorage.getItem('isAuth') || '0'
+    }
+  }
+
+  componentDidMount() {
+    this.unsubscribe = store.subscribe(() => {
+      this.setState({
+        isAuth: store.getState().appReducer.isAuth
+      })
+    })
+  }
+  componentWillUnmount() {
+      if(this.unsubscribe) {
+          this.unsubscribe()
+      }
   }
 
   render() {
     return  (
-      <Fragment>
+      <>
         <BrowserRouter>
           <Switch>
             {
               router.map((route, index) => {
                 return <PrivateRouter
+                  isAuth={this.state.isAuth}
                   key={index}
                   {...route}
                 />
@@ -30,7 +46,7 @@ class App extends Component {
             }
           </Switch>
         </BrowserRouter>
-      </Fragment>
+      </>
     )
   }
 }

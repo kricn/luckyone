@@ -28,7 +28,7 @@ import { getToken } from '@/utils/session.js'
 const  PrivateRouter = (props) => {
   //尽管没用到children, 但先解构出来，剩下的属性
   //才是符合Route的属性，不然会报错
-  const { meta, children, ...route } = props
+  const { isAuth, meta, children, ...route } = props
   //判断该路由是否需要登录
   //通过路由表里的meta字段里的auth判断是否需要权限
   if (meta && meta.auth) {
@@ -36,7 +36,9 @@ const  PrivateRouter = (props) => {
     //没有登录就重定向到登录页面
     //或者给每个路由都可以指定重定向的路径
     return getToken() ? 
+        isAuth === '1' ?
         <Route {...route} /> : 
+        <Redirect to="/login" /> : 
         <Redirect to="/login" />
   } else {
     //不用登录的，直接返回，路由表上对应那条的属性赋值给Route
@@ -55,11 +57,35 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 import PrivateRouter from './components/praviteRouter'
 //路由表
 import router from '@/router/index'
+//引入redux的store
+import store from '@/store'
 
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      //定义一个登录的状态，因为有token不一定是登录
+      //同时这个状态改变可以让路由跳转（不是刷新页面的那种跳转）
+      //与location.href是有区别的
+      //区别在于，路由跳转之前的提示信息可以显示在下一个页面
+      //而location.href不会
+      //sessionStorage存的是字符串
+      isAuth: sessionStorage.getItem('isAuth') || '0'
+    }
+  }
+
+  //订阅store里的state
+  componentDidMount() {
+    this.unsubscribe = store.subscribe(() => {
+      this.setState({
+        isAuth: store.getState().appReducer.isAuth
+      })
+    })
+  }
+  componentWillUnmount() {
+      if(this.unsubscribe) {
+          this.unsubscribe()
+      }
   }
 
   render() {
@@ -71,6 +97,7 @@ class App extends Component {
             {
               router.map((route, index) => {
                 return <PrivateRouter
+                  isAuth={this.state.isAuth}
                   key={index}
                   {...route}
                 />
@@ -99,6 +126,10 @@ export default App;
 // 菜单的过滤和路由注册时的过滤是不一样的
 // 注册出的路由数量要>=菜单显示的数量
 
+
+// 这里记得也要定义一个isAuth属性，不然会一直重定向
+
+
 /* @/views/index/index.js */
 //过滤路由注册方法
 //过滤路由注册
@@ -116,7 +147,7 @@ renderRoutes = routes => {
     return routes.map(route => {
       return route.children && route.children.length > 0 ?
         this.renderRoutes(route.children) :
-        <PrivateRouter key={route.path} {...route} />
+        <PrivateRouter isAuth={this.state.isAuth} key={route.path} {...route} />
     })
   }
 
@@ -155,4 +186,118 @@ renderRoutes = routes => {
         </Menu.Item>
       )
   }
+```
+## redux的使用
+redux和vuex一样，都是一个状态管理仓库，react中只允许有一个store，但是可以有多个reducer\
+redux 通过注入组件，在组件中，组件通过dispatch促发reducer的action, reducer更新state的状态\
+最后组件通过订阅sotre而得知state发生变化，从而重新渲染进行更新
+```shell
+# 引入redux react-redux redux-promise redux-logger redux-thunk
+# redux-logger 是调试用的，方便查看store状态变化
+# redux-thunk 处理异步变化，redux-promise 处理promise变化
+npm install redux react-redux redux-promise redux-thunk --save
+npm install redux-logger --save-dev
+```
+新建store文件夹，在其目录下新建index.js文件
+```javascript
+// @/store/index.js
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import appReducer from '@/app.reducer.js';
+import thunk from 'redux-thunk';
+import logger from 'redux-logger'
+import rdPromise from 'redux-promise';
+
+const countReducer = (state = 0, action) => {
+    const {type, payload} = action
+    switch(type) {
+        case 'ADD':
+            return state + payload;
+        case 'MINUS':
+            return state - payload;
+        default:
+            return state
+    }
+}
+
+const totalReducer = {
+    countReducer
+}
+
+const store = createStore(
+    //用于合并所有的reducer
+    combineReducers(totalReducer),
+    applyMiddleware(thunk, logger, rdPromise)
+)
+
+export default store
+```
+在src目录下的index.js中全局注入
+```javascript
+// @/index.js
+import { Provider } from 'react-redux'
+import store from './store';
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
+```
+之后在其他组件引入store，通过getState获取store的值\
+通过store.dispatch({type: 'ADD', payload: 1})的形式去调用reducer的动作
+```javascript
+// @/views/Home/index.js
+import React, { Component, Fragment } from 'react'
+import store from '@/store'
+
+class Home extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+
+  componentDidMount() {
+    //订阅store，state有更新则会促发
+    this.unsubscribe = store.subscribe(() => {
+        //这里使用强制刷新，也可以用this.setState刷新需要的值
+        this.forceUpdate()
+    })
+  }
+  componentWillUnmount() {
+      if(this.unsubscribe) {
+          this.unsubscribe()
+      }
+  }
+
+  add = () => {
+    //通过dispatch促发reducer里的action
+    store.dispatch({type: 'ADD', payload: 1})
+  }
+
+  del = () => {
+    store.dispatch({type: 'MINUS', payload: 1})
+  }
+
+  render() {
+    return (
+      <>
+        统计
+        <div>
+          {/*
+            获取state的值
+            获取到的是一个对象
+            对象的key值是store里通过combineReducers时的对象的key，
+            值就是reducer里的state
+          */}
+          {store.getState().countReducer}
+        </div>
+        <button onClick={this.add}>+</button>
+        <button onClick={this.del}>-</button>
+      </>
+    )
+  }
+}
+
+export default Home;
 ```

@@ -12,9 +12,13 @@ class Statistic extends Component {
   }
 
   componentDidMount() {
-    getArticleList().then(res => {}).catch()
+    getArticleList().then(res => {
+      store.dispatch({type: 'GETLIST', payload: res && res.data && res.data.list})
+    }).catch()
     this.unsubscribe = store.subscribe(() => {
-        this.forceUpdate()
+        this.setState({
+          list: [...store.getState().appReducer.list]
+        })
     })
   }
   componentWillUnmount() {
@@ -23,23 +27,21 @@ class Statistic extends Component {
       }
   }
 
-  add = () => {
-    store.dispatch({type: 'ADD', payload: 1})
-  }
-
-  del = () => {
-    store.dispatch({type: 'MINUS', payload: 1})
-  }
-
   render() {
     return (
       <>
         统计
-        <div>
-          {store.getState().countReducer}
-        </div>
-        <button onClick={this.add}>+</button>
-        <button onClick={this.del}>-</button>
+        {
+          this.state.list.length > 0 ? 
+          <div>
+            {
+              this.state.list.map((item, index) => {
+                return <div key={index}>{item.title}</div>
+              })
+            }
+          </div> :
+          'loading...'
+        }
       </>
     )
   }

@@ -35,7 +35,7 @@ API.interceptors.response.use(response => {
     const data = err.response.data
     if (statusCode === 401) {
         Message.error(data.message)
-        store.dispatch({type: 'LOGIN', payload: false})
+        store.dispatch({type: 'LOGIN', payload: '0'})
         return ;
     }
     return Promise.reject(err)

@@ -13,15 +13,18 @@ import { getRole } from '../../utils/session.js'
 
 import './index.scss'
 
+import store from '@/store'
+
 const { Header, Sider, Content } = Layout
 
 export default class Index extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       menu: [],
-      loading: true
+      loading: true,
+      isAuth: sessionStorage.getItem('isAuth') || '0'
     }
   }
 
@@ -32,6 +35,16 @@ export default class Index extends Component {
       menu: this.filterRoutes(menu),
       loading: false
     })
+    this.unsubscribe = store.subscribe(() => {
+      this.setState({
+        isAuth: store.getState().appReducer.isAuth
+      })
+    })
+  }
+  componentWillUnmount() {
+    if(this.unsubscribe) {
+        this.unsubscribe()
+    }
   }
 
   //过滤路由注册
@@ -47,7 +60,7 @@ export default class Index extends Component {
     return routes.map(route => {
       return route.children && route.children.length > 0 ?
         this.renderRoutes(route.children) :
-        <PrivateRouter key={route.path} {...route} />
+        <PrivateRouter isAuth={this.state.isAuth} key={route.path} {...route} />
     })
   }
 

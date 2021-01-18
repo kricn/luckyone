@@ -7,11 +7,10 @@ import { Redirect, Route} from 'react-router-dom'
 import { getToken } from '../../utils/session.js'
 
 const  PrivateRouter = (props) => {
-  const isAuth = sessionStorage.getItem('isAuth')
-  const { meta, children, ...route } = props
+  const { isAuth, meta, children, ...route } = props
   if (meta && meta.auth) {
     return getToken() ? 
-        isAuth === 'true' ?
+        isAuth === '1' ?
         <Route {...route} /> : 
         <Redirect to="/login" /> : 
         <Redirect to="/login" />
