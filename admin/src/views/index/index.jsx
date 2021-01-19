@@ -6,14 +6,15 @@ import { Layout } from 'antd';
 import menu from '@/router/menu'
 
 //自定义组件
-import Aside from './components/aside'
+import Aside from './components/Aside'
+import AHeader from './components/AHeader'
 import PrivateRouter from '@/components/praviteRouter'
 
-import { getRole } from '../../utils/session.js'
-
-import './index.scss'
+import style from './index.module.scss'
 
 import store from '@/store'
+
+import { getAuth } from '@/utils/session.js'
 
 const { Header, Sider, Content } = Layout
 
@@ -24,7 +25,7 @@ export default class Index extends Component {
     this.state = {
       menu: [],
       loading: true,
-      isAuth: sessionStorage.getItem('isAuth') || '0'
+      isAuth: getAuth('isAuth') || '0'
     }
   }
 
@@ -32,7 +33,7 @@ export default class Index extends Component {
     //模拟异步请求
     //可以设置一个loading来处理异步请求
     this.setState({
-      menu: this.filterRoutes(menu),
+      menu: menu,
       loading: false
     })
     this.unsubscribe = store.subscribe(() => {
@@ -45,14 +46,6 @@ export default class Index extends Component {
     if(this.unsubscribe) {
         this.unsubscribe()
     }
-  }
-
-  //过滤路由注册
-  filterRoutes = routes => {
-    const role = getRole('role')
-    return routes.filter(item => {
-      return !item.meta || !item.meta.role || item.meta.role.indexOf(role) !== -1
-    })
   }
 
   //渲染路由
@@ -69,17 +62,20 @@ export default class Index extends Component {
       return <div>loading...</div>
     } else {
       return (
-        <Layout className="layout_wrap">
+        <Layout className={style.layout_wrap}>
           <Sider
-            collapsible
+            className={style.layout_sider}
+            collapsed
           >
             <Aside
               menu={this.state.menu}
             />
           </Sider>
           <Layout>
-            <Header className="layout_header">头部</Header>
-            <Content className="layout_content">
+            <Header className={style.layout_header}>
+              <AHeader />
+            </Header>
+            <Content className={style.layout_content}>
               <Switch>
                 {
                   this.renderRoutes(this.state.menu)

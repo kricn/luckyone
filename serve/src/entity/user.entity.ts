@@ -11,17 +11,12 @@ export class User {
 
     @Column({
         length: 45,
-        default: ""
+        nullable: true
     })
     nickname: string;
 
     @Column({length: 20})
     password: string;
-
-    @Column({
-        default: 1
-    })
-    role: number;
 
     @CreateDateColumn()
     created_date: Date;
@@ -31,9 +26,4 @@ export class User {
 
     @OneToOne(type => Profile, profile => profile.user)
     profile: Profile
-
-    @OneToMany(type => Article, article => article.user, {
-        onDelete: 'SET NULL'
-    })
-    article: Article[]
 }

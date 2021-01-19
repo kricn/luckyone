@@ -13,8 +13,7 @@ const menu = [
     meta: {
       title: '分析',
       icon: BarChartOutlined,
-      auth: true,
-      role: ['user', 'admin']
+      auth: true
     },
     children: [
       // {
@@ -46,8 +45,7 @@ const menu = [
     meta: {
       title: 'setting',
       icon: BarChartOutlined,
-      auth: true,
-      role: ['admin']
+      auth: true
     }
   },
   {

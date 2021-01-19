@@ -1,3 +1,4 @@
+@import '@/styles/config.scss';
 .layout_wrap {
   height: 100vh;
 
@@ -6,11 +7,17 @@
     z-index: 2;
     height: 70px;
     background: #fff;
-    @include webkit(box-shadow, 0 1px 5px #ddd)
+    @include webkit(box-shadow, 0 1px 5px #ddd);
+    // box-shadow: 0 1px 5px #ddd;
+    display: flex;
+    justify-content: flex-end;
   }
   .layout_content {
     border: 10px solid #f7f7f7;
     background: #fff;
     padding: 15px;
+  }
+  .layout_sider {
+    position: relative;
   }
 }

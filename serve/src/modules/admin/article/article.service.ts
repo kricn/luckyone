@@ -39,7 +39,6 @@ export class ArticleService {
         article.summary = summary
         article.cover = tempCover
         article.words = words
-        article.user = user.id
         article.tags = await this.tagsRepository
                                  .createQueryBuilder('i')
                                  .where('i.id in (:...id)', {id: tags})
@@ -158,7 +157,6 @@ export class ArticleService {
 
         const res = await this.articleRepository
             .createQueryBuilder('article')
-            .leftJoin('article.user', 'user', 'user.id = :id', {id: user.id})
             .leftJoinAndSelect('article.images', 'images')
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')

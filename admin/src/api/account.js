@@ -31,3 +31,18 @@ export function Register (data) {
         })
     })
 }
+
+//获取当前用户
+export function getCurrent () {
+    return new Promise((resolve, reject) => {
+        API.request({
+            url: `/admin/user`,
+            method: 'GET'
+        }).then(res => {
+            const data = res.data
+            resolve(data)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+} 

@@ -1,16 +1,16 @@
 const token = 'token'
-const role = 'role'
+const isAuth = 'isAuth'
 
 export const setToken = value => {
-  sessionStorage.setItem(token, value)
+  localStorage.setItem(token, value)
 }
 export const getToken = () => {
-  return sessionStorage.getItem(token)
+  return localStorage.getItem(token)
 }
 
-export const getRole = () => {
-  return sessionStorage.getItem(role)
+export const setAuth = value => {
+  localStorage.setItem(isAuth, value)
 }
-export const setRole = value => {
-  return sessionStorage.setItem(role, value)
+export const getAuth = () => {
+  return localStorage.getItem(isAuth)
 }

@@ -1,10 +1,12 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 
 import { Menu } from 'antd'
+import { MenuFoldOutlined} from '@ant-design/icons'
 
 
-import './index.scss'
+
+import style from './index.module.scss'
 import logo from '@/image/yz.jpg'
 
 
@@ -77,8 +79,8 @@ class Aside extends Component {
   render() {
     const { selectedKey, menu } = this.state
     return (
-      <Fragment>
-        <div className="logo">
+      <>
+        <div className={style.logo}>
           <img src={logo} alt="logo" />
         </div>
         <Menu
@@ -86,6 +88,8 @@ class Aside extends Component {
           theme="dark"
           selectedKeys={[selectedKey]}
           onClick={this.selectMenu}
+          inlineCollapsed
+          inlineIndent={24}
         >
           {
             menu && menu.map(item => {
@@ -93,7 +97,10 @@ class Aside extends Component {
             })
           }
         </Menu>
-      </Fragment>
+        <div className={style.trggier}>
+          <MenuFoldOutlined />
+        </div>
+      </>
     )
   }
 }

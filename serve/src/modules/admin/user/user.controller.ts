@@ -1,8 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, Query, Request } from '@nestjs/common';
+import { Result } from 'src/common/interface/result.interface';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from './user.service'
-
-const userQuery = ['username', 'id']
 
 @Controller('admin/user')
 export class UserController {
@@ -49,25 +48,20 @@ export class UserController {
 
 
     @Get()
-    async findAll(@Query() q, @Request() req) {
-        let query = {}
-        let res = []
-        userQuery.forEach(item => {
-            if (q[item]) {
-                query[item] = q[item]
+    async current(@Request() req): Promise<Result> {
+        const { username } = req.user
+        const user = await this.userService.getCurrentUser(username)
+        if (!user) {
+            throw new HttpException({
+                message: '未查找到该用户'
+            }, HttpStatus.BAD_REQUEST)
+        } else {
+            return {
+                code: 0,
+                msg: 'success',
+                data: user
             }
-        })
-        const data = await this.userService.find({
-            where: query,
-            skip: q.skip,
-            take: q.take
-        })
-        return data
-    }
-
-    @Get('/:username')
-    async getUser(@Param() params) {
-        return await this.userService.findUser(params.username)
+        }
     }
 
     //更新

@@ -40,7 +40,7 @@ class Statistic extends Component {
               })
             }
           </div> :
-          'loading...'
+          <div>loading...</div>
         }
       </>
     )

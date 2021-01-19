@@ -8,12 +8,13 @@ import {  } from 'antd';
 import PrivateRouter from './components/praviteRouter'
 import router from '@/router/index'
 import store from '@/store'
+import { getAuth } from './utils/session';
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isAuth: sessionStorage.getItem('isAuth') || '0'
+      isAuth: getAuth('isAuth') || '0'
     }
   }
 

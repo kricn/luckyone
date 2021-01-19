@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom'
 
 //antd
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, Message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 //api
@@ -12,7 +12,7 @@ import { Login, Register } from '../../api/account.js'
 import './index.scss'
 
 //方法
-import { setToken, setRole } from '../../utils/session.js'
+import { setToken } from '@/utils/session.js'
 
 import store from '@/store'
 
@@ -42,11 +42,10 @@ class SignForm extends Component {
         if (mode === 'login') {
             Login(values).then(res => {
                 setToken(res.data.token)
-                res.data.user.role === 1 ? setRole('admin') : setRole('user')
                 store.dispatch({type: 'LOGIN', payload: '1'})
                 this.props.history.push('/')
             }).catch(err => {
-                
+                Message.error('登录失败.')
             }).finally(() => {
                 _this.setState({
                     loading: false

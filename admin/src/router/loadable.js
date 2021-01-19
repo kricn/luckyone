@@ -8,9 +8,9 @@ const loadingComponent = () => {
   	display: 'flex',
   	justifyContent: 'center',
   	alignItems: 'center',
-  	height: '100%'
+  	height: '100vh'
   }}>
-    <div><Spin size="large" /></div>
+    <div><Spin /></div>
   </div>;
 };
 

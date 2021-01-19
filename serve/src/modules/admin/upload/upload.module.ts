@@ -12,7 +12,7 @@ import { diskStorage } from 'multer';
     MulterModule.register({
       storage: diskStorage({
         //自定义路径
-        destination: join(__dirname, '../../', `/public/upload`),
+        destination: join(__dirname, '../../../', `/public/upload`),
         filename: (req, file, cb) => {
           // 自定义文件名
           const filename = `${dayjs().valueOf()}_${file.originalname}`;

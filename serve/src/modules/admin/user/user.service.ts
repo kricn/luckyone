@@ -11,10 +11,19 @@ export class UserService {
         @InjectRepository(User) private readonly userRepository: Repository<User>,
         @InjectRepository(Profile) private readonly profileRepository: Repository<Profile>
     ){}
+    
+    async getCurrentUser(username: string) {
+        return await this.userRepository
+            .createQueryBuilder('user')
+            .leftJoinAndSelect('user.profile', 'p')
+            .select(['user.id', 'user.username', 'user.nickname', 'p'])
+            .where('user.username = :username', {username})
+            .getOne()
+    }
 
     async findUser(username: string) {
         return await this.userRepository.findOne({
-            where: {username: username}
+            where: {username}
         })
     }
 
@@ -43,18 +52,6 @@ export class UserService {
             }, HttpStatus.SERVICE_UNAVAILABLE)
         }
     }
-
-    // async findUser(username) {
-    //     const user = await getConnection()
-    //         .createQueryBuilder()
-    //         .select(['u.username', 'u.nickname', 'u.role'])
-    //         .from(User, 'u')
-    //         .leftJoinAndSelect("u.profile", "profile")
-    //         .leftJoinAndSelect('u.article', 'article')
-    //         .where(`u.username = :username`, {username: username})
-    //         .getOne()
-    //     return user
-    // }
 
     async findOne(username) {
         return await this.userRepository.findOne({
@@ -87,7 +84,7 @@ export class UserService {
 
     async update(body, user) {
         let target = '/profile'
-        const { cover, avatar, article, summary } = body
+        const { cover, avatar, article, summary, nickname } = body
         const cover_path = await writeImage(cover, target)
         const avatar_path = await writeImage(avatar, target)
         await getConnection()
@@ -101,6 +98,14 @@ export class UserService {
             })
             .where("user_id=:id", {id: user.id})
             .execute()
+        await getConnection()
+        .createQueryBuilder()
+        .update(User)
+        .set({
+            nickname
+        })
+        .where("id=:id", {id: user.id})
+        .execute()
         return '修改成功'
     }
 }

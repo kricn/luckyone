@@ -38,10 +38,6 @@ export class Article {
     @UpdateDateColumn()
     updated_date: Date;
 
-    @ManyToOne(type => User, user => user.article)
-    @JoinColumn({name: 'user_id'})
-    user: User
-
     @OneToMany(type => ArticleImg, img => img.article)
     images: ArticleImg[]
 
