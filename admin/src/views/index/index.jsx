@@ -25,6 +25,7 @@ export default class Index extends Component {
     this.state = {
       menu: [],
       loading: true,
+      collapsed: false,
       isAuth: getAuth('isAuth') || '0'
     }
   }
@@ -43,9 +44,16 @@ export default class Index extends Component {
     })
   }
   componentWillUnmount() {
-    if(this.unsubscribe) {
-        this.unsubscribe()
-    }
+    this.setState = () => null
+  }
+
+  //收缩菜单
+  triggleMenu = broken => {
+    if(broken !== undefined && !broken) return ;
+    if (broken !== undefined && broken && this.state.collapsed) return ;
+    this.setState({
+      collapsed: !this.state.collapsed
+    })
   }
 
   //渲染路由
@@ -64,14 +72,20 @@ export default class Index extends Component {
       return (
         <Layout className={style.layout_wrap}>
           <Sider
+            collapsible
             className={style.layout_sider}
-            collapsed
+            collapsed={this.state.collapsed}
+            breakpoint="md"
+            collapsedWidth={80}
+            trigger={null}
+            onBreakpoint={(broken) => this.triggleMenu(broken)}
           >
             <Aside
               menu={this.state.menu}
+              triggleMenu={this.triggleMenu}
             />
           </Sider>
-          <Layout>
+          <Layout className={style.layout_wrap_content}>
             <Header className={style.layout_header}>
               <AHeader />
             </Header>

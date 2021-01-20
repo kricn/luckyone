@@ -76,6 +76,11 @@ class Aside extends Component {
     })
   }
 
+  //收缩菜单
+  triggleMenu = () => {
+    this.props.triggleMenu()
+  }
+
   render() {
     const { selectedKey, menu } = this.state
     return (
@@ -88,8 +93,6 @@ class Aside extends Component {
           theme="dark"
           selectedKeys={[selectedKey]}
           onClick={this.selectMenu}
-          inlineCollapsed
-          inlineIndent={24}
         >
           {
             menu && menu.map(item => {
@@ -97,7 +100,10 @@ class Aside extends Component {
             })
           }
         </Menu>
-        <div className={style.trggier}>
+        <div
+          className={style.trggier}
+          onClick={this.triggleMenu}
+        >
           <MenuFoldOutlined />
         </div>
       </>

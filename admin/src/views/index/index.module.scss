@@ -2,6 +2,14 @@
 .layout_wrap {
   height: 100vh;
 
+  .layout_wrap_content {
+    height: 100vh;
+    overflow: auto;
+  }
+
+  :global .ant-layout-content {
+    min-height: auto;
+  }
   .layout_header {
     position: relative;
     z-index: 2;
@@ -13,9 +21,9 @@
     justify-content: flex-end;
   }
   .layout_content {
-    border: 10px solid #f7f7f7;
+    // border: 10px solid #f7f7f7;
     background: #fff;
-    padding: 15px;
+    padding: 1em;
   }
   .layout_sider {
     position: relative;

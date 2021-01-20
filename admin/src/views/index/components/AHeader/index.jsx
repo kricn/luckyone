@@ -22,17 +22,17 @@ class AHeader extends Component {
     componentDidMount() {
         getCurrent().then(res => {
             store.dispatch({type: 'SETUSER', payload: res.data})
+        }).catch(err => {
+            console.log(err)
         })
-        this.subscribe = store.subscribe(() => {
+        this.unsubscribe = store.subscribe(() => {
             this.setState({
                 user: store.getState().appReducer.user
             })
         })
     }
     componentWillUnmount() {
-        if(this.unsubscribe) {
-            this.unsubscribe()
-        }
+        this.setState = () => null
     }
 
 
@@ -50,7 +50,7 @@ class AHeader extends Component {
                     <>
                         {
                             user.profile && user.profile.avatar ? 
-                            <Avatar src={ '/api' + user.profile.avatar} /> :
+                            <Avatar src={ process.env.REACT_APP_API + user.profile.avatar} /> :
                             <Avatar size={32} icon={<UserOutlined />} />
                         }
                         {

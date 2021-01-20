@@ -26,9 +26,7 @@ class App extends Component {
     })
   }
   componentWillUnmount() {
-      if(this.unsubscribe) {
-          this.unsubscribe()
-      }
+    this.setState = () => null
   }
 
   render() {
