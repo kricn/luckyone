@@ -4,7 +4,7 @@ import { Link, withRouter } from 'react-router-dom'
 import { Menu } from 'antd'
 import { MenuFoldOutlined} from '@ant-design/icons'
 
-
+import { deepCopy } from '@/utils/common'
 
 import style from './index.module.scss'
 import logo from '@/image/yz.jpg'
@@ -26,7 +26,7 @@ class Aside extends Component {
     const { menu } = this.props
     this.setState({
       selectedKey: pathname,
-      menu: this.filterRoutes(menu)
+      menu: this.filterRoutes(deepCopy(menu))
     })
   }
 
@@ -37,10 +37,13 @@ class Aside extends Component {
     })
   }
 
-  //过滤动态路由
+  //过滤动态路由和不显示路由
   filterRoutes = routes => {
     return routes.filter(item => {
-      return !item.path.includes(':')
+      if (item.children && item.children.length > 0) {
+        item.children = this.filterRoutes(item.children)
+      }
+      return !(item.meta && item.meta.noMenu) && !item.path.includes(':')
     })
   }
 

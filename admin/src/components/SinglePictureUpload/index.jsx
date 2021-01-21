@@ -4,6 +4,8 @@ import { Upload } from 'antd'
 
 import { getToken } from '@/utils/session'
 
+import style from './index.module.scss'
+
 class index extends Component {
     constructor(props) {
         super(props)
@@ -22,41 +24,53 @@ class index extends Component {
         })
     }
 
-    handleAvatarChange = e => {
+    handleChange = e => {
         this.setState({
             loading: true
         })
-        const avatar = e.file
-        if (avatar.status === 'done') {
+        const pic = e.file
+        if (pic.status === 'done') {
             this.setState({
                 fileList: [{
-                    uid: avatar.uid,
-                    url: avatar.response.path
+                    uid: pic.uid,
+                    url: pic.response.path
                 }],
                 loading: false
             })
-            this.props.updateAvatar(avatar.response.path)
+            if (this.props.update) this.props.update(pic.response.path)
+        }
+        if ( pic.status === 'error') {
+            this.setState({loading: false})
         }
     }
 
     render() {
-        const { fileList } = this.state
+        const { fileList, loading } = this.state
         return (
             fileList ?
             <Upload
+                className={style.upload}
                 name="file"
                 listType="picture-card"
                 showUploadList={false}
                 fileList={fileList}
                 action={process.env.REACT_APP_API + '/admin/upload'}
-                onChange={this.handleAvatarChange}
+                onChange={this.handleChange}
                 headers={{
                     token: getToken()
                 }}
             >
                 {
-                    fileList[0].url ? <img src={process.env.REACT_APP_API + fileList[0].url} alt="pic" /> : <div>upload</div>
+                    loading ?
+                    <div>uploading...</div> :
+                    fileList[0].url ?
+                    <div className={style.pic} style={{backgroundImage: `url(${process.env.REACT_APP_API + fileList[0].url})`}} /> :
+                    <div>upload</div>
                 }
+                
+                {/* {
+                    fileList[0].url ? <img src={process.env.REACT_APP_API + fileList[0].url} alt="pic" /> : <div>upload</div>
+                } */}
             </Upload> :
             <div>loading...</div>
         );

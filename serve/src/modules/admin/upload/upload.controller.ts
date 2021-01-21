@@ -23,7 +23,6 @@ export class UploadController {
             data:[]
         }
         files.forEach(async file => {
-            console.log(file)
             res.data.push({
                 name: file.originalname,
                 ...await this.uploadService.uploads(file)

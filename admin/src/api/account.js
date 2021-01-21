@@ -46,3 +46,19 @@ export function getCurrent () {
         })
     })
 } 
+
+//更新用户信息
+export function updateCount (data) {
+    return new Promise((resolve, reject) => {
+        API.request({
+            url: `/admin/user`,
+            method: 'PUT',
+            data
+        }).then(res => {
+            const data = res.data
+            resolve(data)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}

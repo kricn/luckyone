@@ -13,8 +13,6 @@ const appReducer = (state = initState, action) => {
         case 'LOGIN':
             setAuth(payload)
             return login(state, payload)
-        case 'GETLIST':
-            return Object.assign({}, state, {list: payload})
         case 'SETUSER':
             return setUser(state, payload)
         default:

@@ -24,7 +24,7 @@ export class ArticleService {
 
     //添加文章
     async addArticle(body: ArticleAddDTO): Promise<Result> {
-        const { title, content, summary, cover, words, user, images, tags } = body
+        const { title, content, summary, cover, words, images, tags } = body
         let imagesPath = '/article'
 
         let tempImages = []

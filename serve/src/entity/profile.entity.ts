@@ -12,7 +12,7 @@ export class Profile {
     cover: string;
 
     @Column({nullable:true})
-    article: string
+    article: number;
 
     @Column({nullable: true})
     summary: string

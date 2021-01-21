@@ -58,11 +58,20 @@ export default class Index extends Component {
 
   //渲染路由
   renderRoutes = routes => {
-    return routes.map(route => {
-      return route.children && route.children.length > 0 ?
-        this.renderRoutes(route.children) :
-        <PrivateRouter isAuth={this.state.isAuth} key={route.path} {...route} />
+    return this.flatRoutes(routes).map(route => {
+      return <PrivateRouter isAuth={this.state.isAuth} key={route.path} {...route} />
     })
+  }
+
+  //路由扁平化
+  flatRoutes = routes => {
+    return routes.reduce((total, item) => {
+      if (item.children && item.children.length > 0) {
+        total = total.concat(this.flatRoutes(item.children))
+      }
+      total.push(item)
+      return total
+    }, [])
   }
 
   render() {

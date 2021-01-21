@@ -1,19 +1,18 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 
+//store
 import store from '@/store'
-//antd
-import { Form, Input, Button, Select  } from 'antd';
+//components
 import SettingForm from './SettingForm'
-
-const { Option } = Select;
+//api
+import { getArticleList } from '@/api/article'
 
 class Setting extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			userInfo: null,
-			form: {},
-			name: 'a'
+			articleList: []
 		}
 	}
 
@@ -22,17 +21,35 @@ class Setting extends Component {
 		this.setState({
 			userInfo: Object.assign({}, user)
 		})
+		getArticleList().then(res => {
+			this.setState({
+				articleList: [...(res.data && res.data.list)]
+			})
+		})
 	}
 
-	
+	componentWillUnmount() {
+		this.setState = () => null
+	}
+
+	//处理articleList
+	formatArticleList(articleList) {
+		return articleList.map(item => {
+			return {
+				label: item.title,
+				value: item.id
+			}
+		})
+	}
 
 	render() {
-		const { userInfo } = this.state
+		const { userInfo, articleList } = this.state
 		return (
 			userInfo ?
 			(
 				<SettingForm
 					userInfo={userInfo}
+					articleList={this.formatArticleList(articleList)}
 				/>
 			) : 
 			(

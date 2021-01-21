@@ -1,11 +1,15 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
-import appReducer from '@/app.reducer.js';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger'
 import rdPromise from 'redux-promise';
 
+// reducer
+import appReducer from '@/app.reducer.js';
+import articleReducer from './reducer/article.reducer'
+
 const totalReducer = {
-    appReducer
+    appReducer,
+    articleReducer
 }
 
 const store = createStore(

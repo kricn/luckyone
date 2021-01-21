@@ -2,6 +2,9 @@ import * as fs from 'fs';
 import { join } from 'path'
 
 export const writeImage = function (source: string, target: string): Promise<string> {
+    if(!source) {
+        return null
+    }
     return new Promise((resolve, reject) => {
         //静态文件目录
         let root = join(__dirname, '..', process.env.STATIC_ROOT)

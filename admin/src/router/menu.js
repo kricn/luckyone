@@ -29,15 +29,27 @@ const menu = [
       // }
     ]
   },
-  // {
-  //   path: '/alian/home/:id',
-  //   component: LazyLoad(() => import('@/views/login')),
-  //   exact: true,
-  //   meta: {
-  //     auth: true,
-  //     role: ['user', 'admin']
-  //   }
-  // },
+  {
+    path: '/alian/article',
+    component: LazyLoad(() => import('@/views/Article')),
+    exact: true,
+    meta: {
+      title: '文章管理',
+      icon: BarChartOutlined,
+      auth: true,
+    },
+    children: [
+      {
+        path: '/alian/article/create',
+        component: LazyLoad(() => import('@/views/Article/CreateArticle')),
+        exact: true,
+        meta: {
+          noMenu: true,
+          auth: true,
+        },
+      }
+    ]
+  },
   {
     path: '/alian/setting',
     component: LazyLoad(() => import('@/views/setting')),
