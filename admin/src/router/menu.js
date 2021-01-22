@@ -47,6 +47,15 @@ const menu = [
           noMenu: true,
           auth: true,
         },
+      },
+      {
+        path: '/alian/article/:id',
+        component: LazyLoad(() => import('@/views/Article/EditArticle')),
+        exact: true,
+        meta: {
+          noMenu: true,
+          auth: true,
+        },
       }
     ]
   },

@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from 'react'
 
-import ArticleTable from './ArticleTable'
+import { Button } from 'antd'
+
+import ArticleTable from './components/ArticleTable'
 
 import { getArticleList } from '@/api/article.js'
-
-
 
 class Article extends Component {
   constructor(props) {
@@ -22,6 +22,7 @@ class Article extends Component {
   }
   componentWillUnmount() {
     this.setState = () => null
+    sessionStorage.removeItem('current_page')
   }
 
   getArticleList = (params) => {
@@ -36,15 +37,25 @@ class Article extends Component {
     })
   }
 
+  toCreateArticle = () => {
+    this.props.history.push('/alian/article/create')
+  }
+
+  toEditArticle = id => {
+    this.props.history.push(`/alian/article/${id}`)
+  }
+
   render() {
     const { list, loading, total }  = this.state
     return (
       <>
+        <Button onClick={this.toCreateArticle}>创建</Button>
         <ArticleTable
           loading={loading}
           dataSource={list} 
           getArticleList={params => this.getArticleList(Object.assign({}, this.state.params, params))}
           total={total}
+          toEditArticle={id => this.toEditArticle(id)}
         />
       </>
     )

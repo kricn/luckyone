@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 
+import ArticleForm from './components/ArticleForm'
+
 class CreateArticle extends Component {
     render() {
         return (
             <div>
-                CreateArticle
+                <ArticleForm />
             </div>
         );
     }

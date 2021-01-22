@@ -5,7 +5,6 @@ import { Repository, getConnection, getManager  } from 'typeorm';
 
 //entity
 import { Article } from '../../../entity/article.entity'
-import { ArticleImg } from '../../../entity/article_img.entity'
 import { Tags } from '../../../entity/tags.entity'
 
 //dto
@@ -18,19 +17,15 @@ import { Result } from '../../../common/interface/result.interface'
 export class ArticleService {
     constructor(
         @InjectRepository(Article) private readonly articleRepository: Repository<Article>,
-        @InjectRepository(ArticleImg) private readonly articleImgRepository: Repository<ArticleImg>,
         @InjectRepository(Tags) private readonly tagsRepository: Repository<Tags>,
     ){}
 
     //添加文章
     async addArticle(body: ArticleAddDTO): Promise<Result> {
-        const { title, content, summary, cover, words, images, tags } = body
+        const { title, content, summary, cover, words, tags } = body
+        console.log(tags)
         let imagesPath = '/article'
 
-        let tempImages = []
-        images && images.forEach(async img => {
-            tempImages.push(await writeImage(img, imagesPath))
-        })
         let tempCover = await writeImage(cover, imagesPath)
 
         const article = new Article()
@@ -50,29 +45,56 @@ export class ArticleService {
         } catch {
             return {
                 code: -1,
-                msg: '创建文章失败！'
-            }
-        }
-        try {
-            tempImages.length > 0 && tempImages.forEach(async item => {
-                let articleImgEntity = new ArticleImg()
-                articleImgEntity.title = title
-                articleImgEntity.url = item
-                articleImgEntity.article = article
-                await this.articleImgRepository.save(articleImgEntity)
-            })
-        } catch {
-            return {
-                code: -1,
-                msg: '图片或标签写入失败！'
+                message: '创建文章失败！'
             }
         }
 
         return {
             code: 0,
-            msg: 'success'
+            message: 'success'
         }
     }
+
+    //修改文章
+    async editArticle(body: ArticleAddDTO, id: number): Promise<Result> {
+        const { title, content, summary, cover, words, tags } = body
+        let imagesPath = '/article'
+
+        let tempCover = await writeImage(cover, imagesPath)
+
+        // const article = new Article()
+        // article.title = title
+        // article.content = content
+        // article.summary = summary
+        // article.cover = tempCover
+        // article.words = words
+        // article.tags = await this.tagsRepository
+        //                          .createQueryBuilder('i')
+        //                          .where('i.id in (:...id)', {id: tags})
+        //                          .getMany()
+        
+
+        try {
+            await this.articleRepository
+                    .createQueryBuilder('article')
+                    .update(Article)
+                    .set({title, content, summary, cover: tempCover, words})
+                    .where('article.id=:id', {id})
+                    .execute()
+        } catch(e) {
+            console.log(e)
+            return {
+                code: -1,
+                message: '修改文章失败！'
+            }
+        }
+
+        return {
+            code: 0,
+            message: 'tags 未更新'
+        }
+    }
+
 
     //切换文章显示隐藏
     async switchArticleList(id: number, is_show: number): Promise<Result> {
@@ -83,12 +105,12 @@ export class ArticleService {
             is_show = 0
         }
 
-        let articleCount = await this.articleImgRepository.findAndCount({id})
+        let articleCount = await this.articleRepository.findAndCount({id})
         
         if (!articleCount[1]) {
             return {
                 code: -1,
-                msg: '未找到该文章'
+                message: '未找到该文章'
             }
         }
 
@@ -101,7 +123,7 @@ export class ArticleService {
 
         return {
             code: 0,
-            msg: is_show === 1 ? 'showed' : 'hidden'
+            message: is_show === 1 ? 'showed' : 'hidden'
         }
     }
 
@@ -116,7 +138,7 @@ export class ArticleService {
 
         return {
             code: 0,
-            msg: 'delete successful'
+            message: 'delete successful'
         }
     }
 
@@ -157,7 +179,6 @@ export class ArticleService {
 
         const res = await this.articleRepository
             .createQueryBuilder('article')
-            .leftJoinAndSelect('article.images', 'images')
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
             .where(sql, filterParams)
@@ -168,7 +189,7 @@ export class ArticleService {
             .getManyAndCount()
         return {
             code: 0,
-            msg: 'success',
+            message: 'success',
             data: {
                 list: res[0],
                 total: res[1]
@@ -177,16 +198,20 @@ export class ArticleService {
     }
 
     //获取文章详情
-    async getArticleDetail(params) {
-        return await this.articleRepository
+    async getArticleDetail(params): Promise<Result> {
+        const res = await this.articleRepository
             .createQueryBuilder('article')
             // .leftJoinAndSelect('article.user', 'user')
-            .leftJoinAndSelect('article.images', 'images')
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
             // .select(['article', 'images.id'])  //这样写是ok的
             // .where('article.id=:id', {id: params.id})
-            .where('article.id=:id and article.user_id=:userId', {id: params.id, userId: params.user.id})
+            .where('article.id=:id', {id: params.id})
             .getOne() 
+        return {
+            code: 0,
+            message: 'success',
+            data: res
+        }
     }
 }

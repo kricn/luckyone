@@ -26,13 +26,13 @@ export class TagsService {
         } catch (e) {
             return {
                 code: -1,
-                msg: '添加失败',
+                message: '添加失败',
                 data: e
             }
         }
         return {
             code: 0,
-            msg: '添加成功'
+            message: '添加成功'
         }
     }
 
@@ -52,12 +52,12 @@ export class TagsService {
         } catch(e) {
             return {
                 code: -1,
-                msg: '查询失败'
+                message: '查询失败'
             }
         }
         return {
             code: 0,
-            msg: '查询成功',
+            message: '查询成功',
             data: {
                 list: res[0],
                 total: res[1]
@@ -84,13 +84,13 @@ export class TagsService {
         } catch (e) {
             return {
                 code: -1,
-                msg: '删除失败',
+                message: '删除失败',
                 data: e
             }
         }
         return {
             code: 0,
-            msg: '删除成功'
+            message: '删除成功'
         }
     }
 
@@ -109,13 +109,13 @@ export class TagsService {
         } catch (e) {
             return {
                 code: -1,
-                msg: '禁用失败',
+                message: '禁用失败',
                 data: e
             }
         }
         return {
             code: 0,
-            msg: '禁用成功'
+            message: '禁用成功'
         }
     }
 

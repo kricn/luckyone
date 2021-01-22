@@ -58,7 +58,7 @@ export class UserController {
         } else {
             return {
                 code: 0,
-                msg: 'success',
+                message: 'success',
                 data: user
             }
         }

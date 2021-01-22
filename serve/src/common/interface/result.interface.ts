@@ -1,6 +1,6 @@
 interface Result {
     code: number,
-    msg?: string,
+    message?: string,
     data?: any
 }
 

@@ -39,13 +39,12 @@ export class ArticleController {
     }
 
     //切换文章状态
-    @Put('/:id')
+    @Put('/switch_status/:id')
     async switchArticleShow(@Param('id') id: number, @Body('is_show') is_show: number) {
         return await this.articleService.switchArticleList(id, is_show)
     }
 
     //删除文章
-    //外键约束会删除失败
     @Delete('/:id')
     async deleteArticle(@Param('id') id: number) {
         return await this.articleService.deleteArticle(id)
@@ -54,8 +53,8 @@ export class ArticleController {
     //修改文章
     @Put('/:id')
     @UsePipes(ValidationPipe)
-    modifyArticle(@Param('id') param: {id: string}, @Body() body: ArticleAddDTO) {
-        return '修改成功'
+    async modifyArticle(@Param('id') id, @Body() body: ArticleAddDTO) {
+        return await this.articleService.editArticle(body, id)
     }
 
     //保存草稿

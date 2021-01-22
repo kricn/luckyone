@@ -15,11 +15,11 @@ class index extends Component {
         }
     }
 
-    componentDidMount() {
+    componentWillReceiveProps(nextProps) {
         this.setState({
             fileList: [{
                 uid: -1,
-                url: this.props.url
+                url: nextProps.url
             }]
         })
     }
@@ -67,10 +67,6 @@ class index extends Component {
                     <div className={style.pic} style={{backgroundImage: `url(${process.env.REACT_APP_API + fileList[0].url})`}} /> :
                     <div>upload</div>
                 }
-                
-                {/* {
-                    fileList[0].url ? <img src={process.env.REACT_APP_API + fileList[0].url} alt="pic" /> : <div>upload</div>
-                } */}
             </Upload> :
             <div>loading...</div>
         );

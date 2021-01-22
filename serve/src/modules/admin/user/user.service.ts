@@ -44,7 +44,7 @@ export class UserService {
             await this.userRepository.save(user)    
             return {
                 code: 0,
-                msg: '注册成功'
+                message: '注册成功'
             }
         } catch(e) {
             throw new HttpException({

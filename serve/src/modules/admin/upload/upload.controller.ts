@@ -13,6 +13,12 @@ export class UploadController {
     async UploadedFile(@UploadedFile() file) {
         return this.uploadService.uploads(file)
     }
+
+    @Post('/article')
+    @UseInterceptors(FileInterceptor('file'))
+    async UploadedArticleFile(@UploadedFile() file) {
+        return this.uploadService.uploadArticle(file)
+    }
     
     @Post('/mutil')
     @UseInterceptors(FilesInterceptor('files'))

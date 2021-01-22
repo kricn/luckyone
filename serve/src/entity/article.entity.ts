@@ -1,5 +1,4 @@
 import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, JoinColumn, UpdateDateColumn, CreateDateColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
-import { ArticleImg } from "./article_img.entity";
 import { Tags } from "./tags.entity";
 import { User } from './user.entity'
 import { Comment } from './comment.entity'
@@ -17,7 +16,7 @@ export class Article {
     @Column({nullable: true})
     summary: string
 
-    @Column()
+    @Column('longtext')
     content: string
 
     @Column()
@@ -37,9 +36,6 @@ export class Article {
 
     @UpdateDateColumn()
     updated_date: Date;
-
-    @OneToMany(type => ArticleImg, img => img.article)
-    images: ArticleImg[]
 
     @ManyToMany(type => Tags, tags => tags.articles)
     @JoinTable()
