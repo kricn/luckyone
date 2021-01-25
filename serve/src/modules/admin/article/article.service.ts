@@ -60,27 +60,20 @@ export class ArticleService {
         const { title, content, summary, cover, words, tags } = body
         let imagesPath = '/article'
 
-        let tempCover = await writeImage(cover, imagesPath)
-
-        // const article = new Article()
-        // article.title = title
-        // article.content = content
-        // article.summary = summary
-        // article.cover = tempCover
-        // article.words = words
-        // article.tags = await this.tagsRepository
-        //                          .createQueryBuilder('i')
-        //                          .where('i.id in (:...id)', {id: tags})
-        //                          .getMany()
-        
+        let tempCover = await writeImage(cover, imagesPath)        
 
         try {
-            await this.articleRepository
+            const articleBuilder = await this.articleRepository
                     .createQueryBuilder('article')
-                    .update(Article)
-                    .set({title, content, summary, cover: tempCover, words})
                     .where('article.id=:id', {id})
-                    .execute()
+            let article = await articleBuilder.getOne();
+            (await article).tags = await this.tagsRepository
+                                     .createQueryBuilder('i')
+                                     .where('i.id in (:...id)', {id: tags})
+                                     .getMany()
+            await this.articleRepository.save(article)
+            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, words}).execute()
+            console.log(article)
         } catch(e) {
             console.log(e)
             return {
