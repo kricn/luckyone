@@ -53,4 +53,20 @@ export class AuthService {
       };
     }
   }
+
+  //验证token
+  async validateToken(token: string){
+    let validateRes = null;
+    try {
+      validateRes = await this.jwtService.verify(token)
+    } catch(e) {
+      return {
+        isValidateToken: false,
+        errMsg: e.message
+      }
+    }
+    return {
+      isValidateToken: true
+    }
+  }
 }

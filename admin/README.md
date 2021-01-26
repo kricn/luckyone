@@ -121,6 +121,9 @@ export default App;
 // 一个是整体布局路由注册时需要过滤路由，如果有角色权限的话
 // 没有角色权限就不用处理，直接全部注册就好
 // 将注册好的路由表作为参数传给菜单栏，省的二次过滤
+// 注意：这里传过来的路由表是一个数组，是引用数据类型
+// 如果直接过滤，可能会把需要注册的路由也一并过滤掉
+// 所以需要深克隆一个路由表
 // 在菜单栏，其实直接用就行了，但像动态路由这种是不用显示的
 // 这里也把动态路由过滤点
 // 菜单的过滤和路由注册时的过滤是不一样的
@@ -153,10 +156,13 @@ renderRoutes = routes => {
 
 /* @/views/index/components/aside/index.js */
 //过滤菜单路由入口，主要是显示，和隐藏动态路由，一般动态路由是详情或者编辑之类的
-//过滤动态路由
+//过滤动态路由和不显示路由
   filterRoutes = routes => {
     return routes.filter(item => {
-      return !item.path.includes(':')
+      if (item.children && item.children.length > 0) {
+        item.children = this.filterRoutes(item.children)
+      }
+      return !(item.meta && item.meta.noMenu) && !item.path.includes(':')
     })
   }
 //渲染菜单
@@ -164,7 +170,6 @@ renderRoutes = routes => {
     if (!meta) {
       return false;
     }
-    console.log(children)
     return children && children.length > 0 ? 
       (
         <SubMenu key={path} title={meta.title} icon={React.createElement(meta.icon)}>
@@ -191,6 +196,7 @@ renderRoutes = routes => {
 redux和vuex一样，都是一个状态管理仓库，react中只允许有一个store，但是可以有多个reducer\
 redux 通过注入组件，在组件中，组件通过dispatch促发reducer的action, reducer更新state的状态\
 最后组件通过订阅sotre而得知state发生变化，从而重新渲染进行更新
+** 不要为了用redux而用redux **
 ```shell
 # 引入redux react-redux redux-promise redux-logger redux-thunk
 # redux-logger 是调试用的，方便查看store状态变化
@@ -265,9 +271,9 @@ class Home extends Component {
     })
   }
   componentWillUnmount() {
-      if(this.unsubscribe) {
-          this.unsubscribe()
-      }
+    // 这里要变为 null, 不然组件间跳转时异步操作没有完成
+    // 更新 state 的状态会报错
+      this.setState = () => null
   }
 
   add = () => {
@@ -300,4 +306,58 @@ class Home extends Component {
 }
 
 export default Home;
+```
+## css 或 scss 样式隔离和全局样式
+### css 或 scss 样式隔离
+通过脚手架建立的react项目，运行 npm run eject 暴露出 config 文件夹\
+在 /config/webpack.config.js 里已经配置好了 scss 模块化的配置，大概在\
+529行或搜索 sassModuleRegex, 这里只需要安装好 style-loader, css-loader, sass-loader,\
+接着将 scss 文件命名为 xxx.module.scss 即可
+```scss
+// 引入该 scss 文件的组件中用到该类后会生成唯一的类名
+.container {
+  width: 100%;
+  // 通过global修饰后，.box 的类名不会做任何变动
+  // 一般用来修改第三方组件的样式
+  :global(.box) {
+    width: 100%;
+  }
+}
+```
+在组件里使用
+```javascript
+import style from '@/xxx/index.module.scss'
+export default function () {
+  return (
+    <div className={style.container}>
+      <div className={style.box}>box</div>
+    </div>
+  )
+}
+```
+### 全局样式配置
+安装 sass-resources-loader
+找到 test: sassRegex, 大概在502行，在 getStyleLoaders() 后 concat 上配置
+```javascript
+{
+  test: sassRegex,
+  exclude: sassModuleRegex,
+  use: getStyleLoaders(
+    {
+      importLoaders: 3,
+      sourceMap: isEnvProduction
+        ? shouldUseSourceMap
+        : isEnvDevelopment,
+    },
+    'sass-loader'
+  ).concat({  //此处
+    loader: 'sass-resources-loader',
+    options: {
+      resources: [
+        path.resolve(__dirname, './../src/styles/main.scss')
+      ]
+    }
+  }),
+  sideEffects: true,
+},
 ```

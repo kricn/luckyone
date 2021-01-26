@@ -73,7 +73,6 @@ export class ArticleService {
                                      .getMany()
             await this.articleRepository.save(article)
             await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, words}).execute()
-            console.log(article)
         } catch(e) {
             console.log(e)
             return {
@@ -177,7 +176,7 @@ export class ArticleService {
             .where(sql, filterParams)
             .skip(offset || 0)
             .take(limit || 10)
-            .orderBy('article.created_date', sort?'ASC':'DESC')
+            // .orderBy('article.created_date', sort?'ASC':'DESC')
             // .getSql()
             .getManyAndCount()
         return {

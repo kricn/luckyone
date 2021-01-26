@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, Request, Req, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UsePipes, Request, Delete } from '@nestjs/common';
 import { ValidationPipe } from 'src/common/pipe/validation.pipe';
 import { ArticleService } from './article.service'
 

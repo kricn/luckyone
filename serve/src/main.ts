@@ -8,10 +8,10 @@ import * as serveStatic from 'serve-static';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets(join(__dirname, 'public')); 
-  app.use('', serveStatic(join(__dirname, '../public'), {
+  app.useStaticAssets(join(__dirname, process.env.STATIC_ROOT)); 
+  app.use('', serveStatic(join(__dirname, '..', process.env.STATIC_ROOT), {
     maxAge: '1d',
-    // extensions: ['jpg', 'jpeg', 'png', 'gif'],
+    extensions: ['jpg', 'jpeg', 'png', 'gif'],
    }));
   app.useGlobalFilters(new HttpExceptionFilter())
   await app.listen(3000);
