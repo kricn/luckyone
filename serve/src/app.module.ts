@@ -13,6 +13,7 @@ import { UploadModule } from './modules/admin/upload/upload.module';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter'
 import { ArticleModule } from './modules/admin/article/article.module';
 import { TagsModule } from './modules/admin/tags/tags.module';
+import { WebArticleModule } from './modules/web/web-article/web-article.module';
 
 
 
@@ -31,7 +32,8 @@ import { TagsModule } from './modules/admin/tags/tags.module';
     AuthModule,
     UploadModule,
     ArticleModule,
-    TagsModule
+    TagsModule,
+    WebArticleModule
   ],
   controllers: [AppController],
   providers: [

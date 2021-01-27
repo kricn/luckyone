@@ -5,17 +5,41 @@ export class Profile {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({nullable: true})
+    @Column({
+        nullable: true,
+        comment: '头像'
+    })
     avatar: string;
 
-    @Column({nullable: true})
+    @Column({
+        nullable: true,
+        comment: '首页封面'
+    })
     cover: string;
 
-    @Column({nullable:true})
+    @Column({
+        nullable:true,
+        comment: '封面文章'
+    })
     article: number;
 
-    @Column({nullable: true})
+    @Column({
+        nullable: true,
+        comment: '封面文章的简介'
+    })
     summary: string
+
+    @Column({
+        nullable: true,
+        comment: '备案文字'
+    })
+    ipx_text: string
+
+    @Column({
+        nullable: true,
+        comment: '备案链接'
+    })
+    ipx_link: string
     
     @CreateDateColumn()
     created_date: Date;

@@ -13,12 +13,17 @@ export class ArticleAddDTO {
     @IsNotIn(['', null, undefined], {message: '图片路径不能为空'})
     cover: string
 
-    @IsNotIn(['', null, undefined], {message: '字数不能为空'})
-    words: string
+    words?: number
 
-    user?: any
+    // user?: any
 
     images?: string[]
 
     tags?: any
+
+    type: number
+
+    is_show?: number
+
+    order: number
 }

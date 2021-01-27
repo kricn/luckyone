@@ -22,8 +22,17 @@ export class ArticleService {
 
     //添加文章
     async addArticle(body: ArticleAddDTO): Promise<Result> {
-        const { title, content, summary, cover, words, tags } = body
-        console.log(tags)
+        const { 
+            title, 
+            content, 
+            summary, 
+            cover, 
+            words, 
+            tags,
+            is_show,
+            order,
+            type,
+        } = body
         let imagesPath = '/article'
 
         let tempCover = await writeImage(cover, imagesPath)
@@ -33,7 +42,11 @@ export class ArticleService {
         article.content = content
         article.summary = summary
         article.cover = tempCover
-        article.words = words
+        type ? article.type = type : ''
+        words ? article.words = words : ''
+        is_show ? article.is_show = is_show : ''
+        order ? article.order = order : ''
+        
         article.tags = await this.tagsRepository
                                  .createQueryBuilder('i')
                                  .where('i.id in (:...id)', {id: tags})
@@ -57,7 +70,7 @@ export class ArticleService {
 
     //修改文章
     async editArticle(body: ArticleAddDTO, id: number): Promise<Result> {
-        const { title, content, summary, cover, words, tags } = body
+        const { title, content, summary, cover, words, tags, is_show, order } = body
         let imagesPath = '/article'
 
         let tempCover = await writeImage(cover, imagesPath)        
@@ -66,13 +79,13 @@ export class ArticleService {
             const articleBuilder = await this.articleRepository
                     .createQueryBuilder('article')
                     .where('article.id=:id', {id})
-            let article = await articleBuilder.getOne();
-            (await article).tags = await this.tagsRepository
+            let article = await articleBuilder.getOne()
+            ;(await article).tags = await this.tagsRepository
                                      .createQueryBuilder('i')
                                      .where('i.id in (:...id)', {id: tags})
                                      .getMany()
             await this.articleRepository.save(article)
-            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, words}).execute()
+            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, words, is_show, order}).execute()
         } catch(e) {
             console.log(e)
             return {
@@ -90,7 +103,6 @@ export class ArticleService {
 
     //切换文章显示隐藏
     async switchArticleList(id: number, is_show: number): Promise<Result> {
-
         if (is_show > 0) {
             is_show = 1
         } else {
@@ -109,7 +121,7 @@ export class ArticleService {
         await this.articleRepository
             .createQueryBuilder('article')
             .update()
-            .set({is_show: is_show})
+            .set({is_show})
             .where('article.id=:id', {id: id})
             .execute()
 
@@ -142,7 +154,7 @@ export class ArticleService {
         limit?: number,
         sort?: number,
     ): Promise<Result> {
-        const only = ['keyword', 'id', 'tags', 'is_show']
+        const only = ['keyword', 'id', 'tags', 'is_show', 'type']
         let filterParams = {}
         only.forEach(key => {
             if (key === 'tags') {
@@ -167,16 +179,19 @@ export class ArticleService {
                     or article.id=:id 
                     or tags.id in (:...tags) 
                     or is_show=:is_show
+                    or type=:type
                   `
 
         const res = await this.articleRepository
             .createQueryBuilder('article')
+            // .leftJoinAndSelect('article.tags', 'tags', 'tags.available=1')  //
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
             .where(sql, filterParams)
+            // .andWhere('article.type <>0')  //获取处type为0之外的值也可以 article.type not in (1,2,3)
             .skip(offset || 0)
             .take(limit || 10)
-            // .orderBy('article.created_date', sort?'ASC':'DESC')
+            // .orderBy('article.order', sort?'ASC':'DESC')
             // .getSql()
             .getManyAndCount()
         return {

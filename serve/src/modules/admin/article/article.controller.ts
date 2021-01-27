@@ -34,7 +34,7 @@ export class ArticleController {
     @Post()
     @UsePipes(ValidationPipe)
     async addArticle(@Body() body: ArticleAddDTO, @Request() req) {
-        body.user = Object.assign({}, req.user)
+        // body.user = Object.assign({}, req.user)
         return await this.articleService.addArticle(body)
     }
 

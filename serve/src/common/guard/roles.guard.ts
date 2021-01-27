@@ -22,6 +22,10 @@ export class RoleGuard implements CanActivate {
     if (this.hasUrl(this.whiteList, request.url) || noAuth) {
       return true
     }
+    const whitePrefix = /^\/web\/*/
+    if (whitePrefix.test(request.url)) {
+      return true
+    }
     const { isValidateToken, errMsg } = await this.authService.validateToken(token)
     if (!isValidateToken) {
       throw new HttpException({

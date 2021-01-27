@@ -19,8 +19,11 @@ export class Article {
     @Column('longtext')
     content: string
 
-    @Column()
-    words: string
+    @Column({
+        comment: '字数',
+        default: 0
+    })
+    words: number
 
     @Column({default: 0})
     views: number
@@ -28,7 +31,19 @@ export class Article {
     @Column({default: 0})
     liked: number
 
-    @Column({default: 1})
+    @Column({
+        default: 1,
+        comment: '文章类型'
+    })
+    type: number
+
+    @Column({
+        default: 0,
+        comment: '排序位置'
+    })
+    order: number
+
+    @Column({default: 1, comment: '是否显示'})
     is_show: number
 
     @CreateDateColumn()
