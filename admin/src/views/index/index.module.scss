@@ -7,7 +7,7 @@
     overflow: auto;
   }
 
-  :global .ant-layout-content {
+  :global(.ant-layout-content) {
     min-height: auto;
   }
   .layout_header {

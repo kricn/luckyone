@@ -23,7 +23,7 @@ export class ArticleAddDTO {
 
     type: number
 
-    is_show?: number
+    status?: number
 
     order: number
 }

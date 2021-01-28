@@ -47,7 +47,6 @@ class index extends Component {
     render() {
         const { fileList, loading } = this.state
         return (
-            fileList ?
             <Upload
                 className={style.upload}
                 name="file"
@@ -63,12 +62,11 @@ class index extends Component {
                 {
                     loading ?
                     <div>uploading...</div> :
-                    fileList[0].url ?
+                    fileList && fileList[0].url ?
                     <div className={style.pic} style={{backgroundImage: `url(${process.env.REACT_APP_API + fileList[0].url})`}} /> :
                     <div>upload</div>
                 }
-            </Upload> :
-            <div>loading...</div>
+            </Upload>
         );
     }
 }

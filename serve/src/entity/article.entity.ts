@@ -44,7 +44,7 @@ export class Article {
     order: number
 
     @Column({default: 1, comment: '是否显示'})
-    is_show: number
+    status: number
 
     @CreateDateColumn()
     created_date: Date;

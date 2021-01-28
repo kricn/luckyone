@@ -36,7 +36,7 @@ export default function ArticleTable(props) {
         return (
             <>
                 <Button type="link" onClick={() => editArticle(text.id)}>编辑</Button>
-                <Button type="link" onClick={() => switchStatus(text.id, text.is_show)}>{text.is_show ? '隐藏' : '展示'}</Button>
+                <Button type="link" onClick={() => switchStatus(text.id, text.status)}>{text.status ? '隐藏' : '展示'}</Button>
                 <Button type="link">删除</Button>
             </>
         )
@@ -55,11 +55,11 @@ export default function ArticleTable(props) {
         props.getArticleList({limit,offset})
     }
 
-    const switchStatus = (id, is_show) => {
+    const switchStatus = (id, status) => {
         const params = {
             id,
             data: {
-                is_show: is_show === 1 ? 0 : 1
+                status: status === 1 ? 0 : 1
             }
         }
         switchArticleStatus(params).then(res => {

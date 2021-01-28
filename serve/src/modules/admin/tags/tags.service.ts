@@ -14,6 +14,35 @@ export class TagsService {
         @InjectRepository(Tags) private readonly tagsRepository: Repository<Tags>,
     ){}
 
+    //获取标签列表
+    async getTagsList(query):Promise<Result> {
+        const { available } = query
+        let sql = ''
+        if (available) {
+            sql = 'available=:available'
+        }
+        let res;
+        try {
+            res = await this.tagsRepository
+                .createQueryBuilder()
+                .where(sql, {available})
+                .getManyAndCount()
+        }catch(e) {
+            return {
+                code: -1,
+                message: '查询失败'
+            }
+        }
+        return {
+            code: 0,
+            message: '查询成功',
+            data: {
+                list: res[0],
+                total: res[1]
+            }
+        }
+    }
+
     //添加标签
     async addTags(name: string): Promise<Result> {
         try {

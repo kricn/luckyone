@@ -89,7 +89,7 @@ class Aside extends Component {
     return (
       <>
         <div className={style.logo}>
-          <img src={logo} alt="logo" />
+          {/* <img src={logo} alt="logo" /> */}
         </div>
         <Menu
           mode="inline"

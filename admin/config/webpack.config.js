@@ -503,20 +503,13 @@ module.exports = function (webpackEnv) {
               exclude: sassModuleRegex,
               use: getStyleLoaders(
                 {
-                  importLoaders: 3,
+                  importLoaders: 4,
                   sourceMap: isEnvProduction
                     ? shouldUseSourceMap
                     : isEnvDevelopment,
                 },
                 'sass-loader'
-              ).concat({
-                loader: 'sass-resources-loader',
-                options: {
-                  resources: [
-                    path.resolve(__dirname, './../src/styles/main.scss')
-                  ]
-                }
-              }),
+              ),
               // Don't consider CSS imports dead code even if the
               // containing package claims to have no side effects.
               // Remove this when webpack adds a warning or an error for this.
@@ -558,7 +551,20 @@ module.exports = function (webpackEnv) {
             },
             {
               test: /\.scss$/,
-              loaders: ['style-loader', 'css-loader', 'sass-loader']
+              use:[
+                {loader: 'style-loader'},
+                {loader: 'css-loader'},
+                {loader: 'sass-loader'},
+                {
+                  loader: 'sass-resources-loader',
+                  options: {
+                    resources: [
+                      // resolve方法第二个参数为scss配置文件地址，如果有多个，就进行依次添加即可
+                      path.resolve(__dirname, './../src/styles/main.scss'),
+                    ],
+                  }
+                }
+              ]
             },
             // ** STOP ** Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.

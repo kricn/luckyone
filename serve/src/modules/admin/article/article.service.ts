@@ -29,7 +29,7 @@ export class ArticleService {
             cover, 
             words, 
             tags,
-            is_show,
+            status,
             order,
             type,
         } = body
@@ -44,7 +44,7 @@ export class ArticleService {
         article.cover = tempCover
         type ? article.type = type : ''
         words ? article.words = words : ''
-        is_show ? article.is_show = is_show : ''
+        status ? article.status = status : ''
         order ? article.order = order : ''
         
         article.tags = await this.tagsRepository
@@ -70,7 +70,7 @@ export class ArticleService {
 
     //修改文章
     async editArticle(body: ArticleAddDTO, id: number): Promise<Result> {
-        const { title, content, summary, cover, words, tags, is_show, order } = body
+        const { title, content, summary, cover, words, tags, status, order } = body
         let imagesPath = '/article'
 
         let tempCover = await writeImage(cover, imagesPath)        
@@ -85,7 +85,7 @@ export class ArticleService {
                                      .where('i.id in (:...id)', {id: tags})
                                      .getMany()
             await this.articleRepository.save(article)
-            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, words, is_show, order}).execute()
+            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, words, status, order}).execute()
         } catch(e) {
             console.log(e)
             return {
@@ -102,11 +102,11 @@ export class ArticleService {
 
 
     //切换文章显示隐藏
-    async switchArticleList(id: number, is_show: number): Promise<Result> {
-        if (is_show > 0) {
-            is_show = 1
+    async switchArticleList(id: number, status: number): Promise<Result> {
+        if (status > 0) {
+            status = 1
         } else {
-            is_show = 0
+            status = 0
         }
 
         let articleCount = await this.articleRepository.findAndCount({id})
@@ -121,13 +121,13 @@ export class ArticleService {
         await this.articleRepository
             .createQueryBuilder('article')
             .update()
-            .set({is_show})
+            .set({status})
             .where('article.id=:id', {id: id})
             .execute()
 
         return {
             code: 0,
-            message: is_show === 1 ? 'showed' : 'hidden'
+            message: status === 1 ? 'showed' : 'hidden'
         }
     }
 
@@ -154,7 +154,7 @@ export class ArticleService {
         limit?: number,
         sort?: number,
     ): Promise<Result> {
-        const only = ['keyword', 'id', 'tags', 'is_show', 'type']
+        const only = ['keyword', 'id', 'tags', 'status', 'type']
         let filterParams = {}
         only.forEach(key => {
             if (key === 'tags') {
@@ -167,27 +167,27 @@ export class ArticleService {
         })
         
         let queryLen = false
+        let sql = []
         for (let key in query) {
             if (only.indexOf(key) >= 0 && query[key] && !queryLen) {
-                queryLen = true
+                if (key === 'tags') {
+                    sql.push('tags.id in (:...tags) ')
+                } else if (key === 'keyword') {
+                    sql.push('article.title like :keyword ')
+                } else {
+                    sql.push(`article.${key}=:${key}`)
+                }
             }
         }
 
-        let sql = !queryLen ? '' :
-                  `
-                    article.title like :keyword 
-                    or article.id=:id 
-                    or tags.id in (:...tags) 
-                    or is_show=:is_show
-                    or type=:type
-                  `
+        let sqlString = sql.join(' and ')
 
         const res = await this.articleRepository
             .createQueryBuilder('article')
             // .leftJoinAndSelect('article.tags', 'tags', 'tags.available=1')  //
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
-            .where(sql, filterParams)
+            .where(sqlString, filterParams)
             // .andWhere('article.type <>0')  //获取处type为0之外的值也可以 article.type not in (1,2,3)
             .skip(offset || 0)
             .take(limit || 10)

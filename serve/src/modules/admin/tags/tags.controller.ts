@@ -24,15 +24,14 @@ export class TagsController {
         return await this.tagsService.addTags(name)
     }
 
-    //查找标签
+    //获取标签列表
     /**
      * 
      * @param query {id: string } 通过,连接id
      */
     @Get()
-    async findTagsById(@Query() query: { id: string}) {
-        const { id } = query
-        return this.tagsService.findTagsById(id)
+    async getTagsList(@Query() query) {
+        return this.tagsService.getTagsList(query)
     }
 
     //删除标签

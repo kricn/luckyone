@@ -2,8 +2,6 @@ import { Component } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 // import { renderRoutes } from 'react-router-config';
 
-import {  } from 'antd';
-
 //自定义组件
 import PrivateRouter from './components/praviteRouter'
 import router from '@/router/index'

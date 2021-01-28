@@ -40,8 +40,8 @@ export class ArticleController {
 
     //切换文章状态
     @Put('/switch_status/:id')
-    async switchArticleShow(@Param('id') id: number, @Body('is_show') is_show: number) {
-        return await this.articleService.switchArticleList(id, is_show)
+    async switchArticleShow(@Param('id') id: number, @Body('status') status: number) {
+        return await this.articleService.switchArticleList(id, status)
     }
 
     //删除文章

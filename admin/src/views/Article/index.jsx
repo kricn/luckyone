@@ -1,10 +1,12 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 
 import { Button } from 'antd'
 
 import ArticleTable from './components/ArticleTable'
+import SearchForm from './components/SearchForm'
 
 import { getArticleList } from '@/api/article.js'
+import { getTagsList } from '@/api/tags.js'
 
 class Article extends Component {
   constructor(props) {
@@ -13,12 +15,16 @@ class Article extends Component {
       list: [],
       total: 0,
       loading: false,
-      params: {}
+      params: {}, 
+      tags: []
     }
   }
 
   componentDidMount() {
     this.getArticleList(this.state.params)
+    getTagsList({available: 1}).then(res => {
+      this.setState({tags: res.data.list})
+    })
   }
   componentWillUnmount() {
     this.setState = () => null
@@ -26,6 +32,7 @@ class Article extends Component {
   }
 
   getArticleList = (params) => {
+    this.setState({params})
     this.setState({loading: true})
     getArticleList(params).then(res => {
       this.setState({
@@ -45,10 +52,24 @@ class Article extends Component {
     this.props.history.push(`/alian/article/${id}`)
   }
 
+  search = params => {
+    params = Object.assign({}, this.state.params, params)
+    this.getArticleList(params)
+  }
+
+  resetParams = () => {
+    this.setState({params: {}}, () => this.getArticleList(this.state.params))
+  }
+
   render() {
-    const { list, loading, total }  = this.state
+    const { list, loading, total, tags }  = this.state
     return (
       <>
+        <SearchForm
+          tags={tags}
+          search={params => this.search(params)}
+          reset={this.resetParams}
+        />
         <Button onClick={this.toCreateArticle}>创建</Button>
         <ArticleTable
           loading={loading}
