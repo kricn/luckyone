@@ -6,6 +6,7 @@ import store from '@/store'
 import SettingForm from './SettingForm'
 //api
 import { getArticleList } from '@/api/article'
+import { getCurrent } from '@/api/account'
 
 class Setting extends Component {
 	constructor(props) {
@@ -42,6 +43,21 @@ class Setting extends Component {
 		})
 	}
 
+	reload = () => {
+		this.setState({
+			userInfo: null
+		})
+		getCurrent().then(res => {
+			store.dispatch({type: 'SETUSER', payload: res.data})
+			this.setState({
+				userInfo: Object.assign({}, res.data)
+			})
+        }).catch(err => {
+			console.log(err)
+			this.forceUpdate()
+        })
+	}
+
 	render() {
 		const { userInfo, articleList } = this.state
 		return (
@@ -50,6 +66,7 @@ class Setting extends Component {
 				<SettingForm
 					userInfo={userInfo}
 					articleList={this.formatArticleList(articleList)}
+					reload={this.reload}
 				/>
 			) : 
 			(

@@ -33,20 +33,21 @@ class MdEditor extends Component {
         const formdata = new FormData()
         formdata.append('file', $file)
         uploadImg(formdata).then(res => {
-            this.$vm.current.$img2Url($file.name, '/api' + res.data.path)
+            this.$vm.current.$img2Url($file.name, process.env.REACT_APP_API + res.data.path)
         })
     }
 
     render() {
         const { value } = this.state
+        const { onChange } = this.props
         return (
             <>
-            <Editor
-                ref={this.$vm}
-                value={value}
-                addImg={($file) => this.addImg($file)}
-                onChange={value => this.handleChange(value)}
-            />
+                <Editor
+                    ref={this.$vm}
+                    value={value}
+                    addImg={($file) => this.addImg($file)}
+                    onChange={value => onChange(value)}
+                />
             </>
         );
     }

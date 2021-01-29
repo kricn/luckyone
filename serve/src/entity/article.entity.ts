@@ -38,6 +38,7 @@ export class Article {
     type: number
 
     @Column({
+        nullable: true,
         default: 0,
         comment: '排序位置'
     })

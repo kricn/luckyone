@@ -37,7 +37,7 @@ class index extends Component {
                 }],
                 loading: false
             })
-            if (this.props.update) this.props.update(pic.response.path)
+            if (this.props.onChange) this.props.onChange(pic.response.path)
         }
         if ( pic.status === 'error') {
             this.setState({loading: false})

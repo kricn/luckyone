@@ -70,7 +70,10 @@ export class ArticleService {
 
     //修改文章
     async editArticle(body: ArticleAddDTO, id: number): Promise<Result> {
-        const { title, content, summary, cover, words, tags, status, order } = body
+        let { title, content, summary, cover, words, tags, status, order } = body
+        if (tags.length < 1) {
+            tags = undefined
+        }
         let imagesPath = '/article'
 
         let tempCover = await writeImage(cover, imagesPath)        
@@ -85,7 +88,7 @@ export class ArticleService {
                                      .where('i.id in (:...id)', {id: tags})
                                      .getMany()
             await this.articleRepository.save(article)
-            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, words, status, order}).execute()
+            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, status, order}).execute()
         } catch(e) {
             console.log(e)
             return {

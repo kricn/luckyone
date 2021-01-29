@@ -3,17 +3,12 @@ import React from 'react'
 import { Button, Input, Form, Row, Col, Select } from 'antd'
 import style from '../index.module.scss'
 
+import MultipleTagsSelect from '@/components/MultipleTagsSelect'
+
 export default function SearchForm(props) {
 
     const [form] = Form.useForm()
-
-    const tags = props.tags.map(item => {
-        return {
-            label: item.name,
-            value: item.id
-        }
-    })
-
+    
     const status = [
         {label: '全部', value: ''},
         {label: '展示', value: 1},
@@ -31,7 +26,7 @@ export default function SearchForm(props) {
      */
     const search = val => {
         if (val.tags.length > 0) {
-            val.tags = val.tags.join('')
+            val.tags = val.tags.join(',')
         }
         props.search(val)
     }
@@ -65,10 +60,7 @@ export default function SearchForm(props) {
                 <Row>
                     <Col span={6}>
                         <Form.Item label="标签" name="tags" initialValue={[]}>
-                            <Select
-                                options={tags}
-                                mode="multiple"
-                            ></Select>
+                            <MultipleTagsSelect />
                         </Form.Item>
                     </Col>
                     <Col span={6}>

@@ -14,20 +14,7 @@ const menu = [
       title: '分析',
       icon: BarChartOutlined,
       auth: true
-    },
-    children: [
-      // {
-      //   path: '/alian/home/hello',
-      //   component: LazyLoad(() => import('@/views/Login')),
-      //   exact: true,
-      //   meta: {
-      //     title: '子分析',
-      //     icon: BarChartOutlined,
-      //     auth: true,
-      //     role: ['user', 'admin']
-      //   },
-      // }
-    ]
+    }
   },
   {
     path: '/alian/article',
@@ -58,6 +45,16 @@ const menu = [
         },
       }
     ]
+  },
+  {
+    path: '/alian/tags',
+    component: LazyLoad(() => import('@/views/Tags')),
+    exact: true,
+    meta: {
+      title: '标签管理',
+      icon: BarChartOutlined,
+      auth: true
+    }
   },
   {
     path: '/alian/setting',
