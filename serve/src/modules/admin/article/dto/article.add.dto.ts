@@ -13,9 +13,9 @@ export class ArticleAddDTO {
     @IsNotIn(['', null, undefined], {message: '图片路径不能为空'})
     cover: string
 
-    words?: number
+    // words?: number
 
-    // user?: any
+    user?: any
 
     images?: string[]
 

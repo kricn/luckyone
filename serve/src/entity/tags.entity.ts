@@ -1,5 +1,6 @@
-import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToMany, JoinTable } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToMany, JoinTable, ManyToOne } from "typeorm";
 import { Article } from './article.entity'
+import { User } from "./user.entity";
 @Entity()
 export class Tags {
     @PrimaryGeneratedColumn()
@@ -30,4 +31,8 @@ export class Tags {
         onDelete: 'NO ACTION'
     })
     articles: Article[]
+
+    @ManyToOne(type => User, user => user.tags)
+    @JoinColumn({name: 'user_id'})
+    user: User
 }

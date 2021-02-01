@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, getManager  } from 'typeorm';
 
 import { Tags } from '../../../entity/tags.entity'
+import { User } from '../../../entity/user.entity'
 
 //interface
 import { Result } from '../../../common/interface/result.interface'
@@ -12,26 +13,32 @@ export class TagsService {
 
     constructor(
         @InjectRepository(Tags) private readonly tagsRepository: Repository<Tags>,
+        @InjectRepository(User) private readonly userRepository: Repository<User>,
     ){}
 
     //获取标签列表
-    async getTagsList(query):Promise<Result> {
-        const { available } = query
-        let sql = ''
-        if (available) {
-            sql = 'available=:available'
+    async getTagsList(query, user):Promise<Result> {
+        let sqlArr = []
+        for (let key in query) {
+            if (key === 'keyword' && query[key]) {
+                sqlArr.push('name like :keyword')
+                query[key] = `%${query[key]}%`
+            } else if (key === 'available' && query[key] !== '') {
+                sqlArr.push('available=:available')
+            }
         }
+        let sql = sqlArr.join(' and ')
         let res;
         try {
             res = await this.tagsRepository
                 .createQueryBuilder()
-                .where(sql, {available})
+                .where(sql, query)
+                .andWhere('user_id=:id', {id: user.id})
                 .getManyAndCount()
         }catch(e) {
-            return {
-                code: -1,
-                message: '查询失败'
-            }
+            throw new HttpException({
+                message: '查询失败' + e
+            }, HttpStatus.SERVICE_UNAVAILABLE)
         }
         return {
             code: 0,
@@ -44,20 +51,16 @@ export class TagsService {
     }
 
     //添加标签
-    async addTags(name: string): Promise<Result> {
+    async addTags(name: string, user): Promise<Result> {
         try {
-          await getConnection()
-            .createQueryBuilder()
-            .insert()
-            .into(Tags)
-            .values({name: name})
-            .execute()  
+            let tags = new Tags()
+            tags.name = name
+            tags.user = user.id
+            this.tagsRepository.save(tags)
         } catch (e) {
-            return {
-                code: -1,
-                message: '添加失败',
-                data: e
-            }
+            throw new HttpException({
+                message: '添加失败' + e
+            }, HttpStatus.SERVICE_UNAVAILABLE)
         }
         return {
             code: 0,
@@ -79,10 +82,9 @@ export class TagsService {
                     .where(sql, { id: ids})
                     .getManyAndCount()
         } catch(e) {
-            return {
-                code: -1,
-                message: '查询失败'
-            }
+            throw new HttpException({
+                message: '查询失败' + e
+            }, HttpStatus.SERVICE_UNAVAILABLE)
         }
         return {
             code: 0,
@@ -94,16 +96,39 @@ export class TagsService {
         }
     }
     
-    //通过一个id查找一个标签
-    async findOneTagById(id: string) {
-        
+    // 修改标签
+    async updatetag(id: number, name: string, user): Promise<Result> {
+        await this.interceptIllegalUser(id, user)
+        let tag = await this.tagsRepository.count({id})
+        if (!tag) {
+            throw new HttpException({
+                message: '未知标签'
+            }, HttpStatus.SERVICE_UNAVAILABLE)
+        }
+        try {
+            await this.tagsRepository
+                .createQueryBuilder('tags')
+                .where('tags.id=:id', {id})
+                .update(Tags)
+                .set({name})
+                .execute()
+        }catch(e) {
+            throw new HttpException({
+                message: '更新失败' + e
+            }, HttpStatus.SERVICE_UNAVAILABLE)
+        }
+        return {
+            code: 0,
+            message: '更新成功'
+        }
     }
 
     //删除标签
-    async deleteTags(id: string): Promise<Result> {
+    async deleteTags(id: string, user): Promise<Result> {
+        id = String(id)
         const ids = id && id.split(',').filter(i => Number(i)).map(i => Number(i))
+        await this.interceptIllegalUser(ids, user)
         const sql = ids ? 'tags.id in (:...id)' : ''
-        
         try {
             await this.tagsRepository
             .createQueryBuilder('tags')
@@ -111,11 +136,9 @@ export class TagsService {
             .where(sql, {id: ids})
             .execute()
         } catch (e) {
-            return {
-                code: -1,
-                message: '删除失败',
-                data: e
-            }
+            throw new HttpException({
+                message: '删除失败' + e
+            }, HttpStatus.SERVICE_UNAVAILABLE)
         }
         return {
             code: 0,
@@ -124,28 +147,50 @@ export class TagsService {
     }
 
     //禁用标签
-    async banTags(id: string): Promise<Result> {
+    async swtichTagsStatus(id: string, available: number, user): Promise<Result> {
+        id = String(id)
         const ids = id && id.split(',').filter(i => Number(i)).map(i => Number(i))
+        await this.interceptIllegalUser(ids, user)
+        
         const sql = ids ? 'tags.id in (:...id)' : ''
-
         try {
             await this.tagsRepository
             .createQueryBuilder('tags')
             .update()
-            .set({available: 0})
+            .set({available: available || 0})
             .where(sql, {id: ids})
             .execute()
         } catch (e) {
-            return {
-                code: -1,
-                message: '禁用失败',
-                data: e
-            }
+            throw new HttpException({
+                message: '禁用失败' + e
+            }, HttpStatus.SERVICE_UNAVAILABLE)
         }
         return {
             code: 0,
             message: '禁用成功'
         }
+    }
+
+    //拦截非法用户
+    async interceptIllegalUser(id, user):Promise<Boolean> {
+        let tags = await this.tagsRepository
+            .createQueryBuilder('tags')
+            .leftJoinAndSelect('tags.user', 'user')
+        let sql = typeof id === 'string' ? 
+            'tags.id=:id' :
+            'tags.id in (:...id)'
+        let count = await tags
+            .where(
+                sql + ' and user.id=:user_id', 
+                {id, user_id: user.id}
+            )
+            .getCount()
+        if (count === 0) {
+            throw new HttpException({
+                message: '未找到对应标签'
+            }, HttpStatus.NOT_FOUND)
+        }
+        return true
     }
 
 }

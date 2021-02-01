@@ -24,6 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         message: '未知用户'
       }, HttpStatus.UNAUTHORIZED)
     }
-    return { id: payload.id, username: payload.username };
+    return { id: payload.id, username: payload.username, nickname: payload.nickname };
   }
 }

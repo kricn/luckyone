@@ -25,36 +25,39 @@ export class ArticleController {
 
     //获取文章详情
     @Get('/:id')
-    async getArticleDetail(@Param() param: {id: string, user?: any}, @Request() req) {
-        param.user = req.user
-        return await this.articleService.getArticleDetail(param)
+    async getArticleDetail(@Param('id') id, @Request() req) {
+        const user = req.user
+        return await this.articleService.getArticleDetail(id, user)
     }
 
     //添加文章
     @Post()
     @UsePipes(ValidationPipe)
     async addArticle(@Body() body: ArticleAddDTO, @Request() req) {
-        // body.user = Object.assign({}, req.user)
-        return await this.articleService.addArticle(body)
+        const user = req.user
+        return await this.articleService.addArticle(body, user)
     }
 
     //切换文章状态
     @Put('/switch_status/:id')
-    async switchArticleShow(@Param('id') id: number, @Body('status') status: number) {
-        return await this.articleService.switchArticleList(id, status)
+    async switchArticleShow(@Param('id') id: number, @Body('status') status: number, @Request() req) {
+        const user = req.user
+        return await this.articleService.switchArticleList(id, status, user)
     }
 
     //删除文章
     @Delete('/:id')
-    async deleteArticle(@Param('id') id: number) {
-        return await this.articleService.deleteArticle(id)
+    async deleteArticle(@Param('id') id: number, @Request() req) {
+        const user = req.user
+        return await this.articleService.deleteArticle(id, user)
     }
 
     //修改文章
     @Put('/:id')
     @UsePipes(ValidationPipe)
-    async modifyArticle(@Param('id') id, @Body() body: ArticleAddDTO) {
-        return await this.articleService.editArticle(body, id)
+    async modifyArticle(@Param('id') id, @Body() body: ArticleAddDTO, @Request() req) {
+        const user = req.user
+        return await this.articleService.editArticle(body, id, user)
     }
 
     //保存草稿

@@ -14,7 +14,12 @@ export default function SearchForm(props) {
 
     
     const search = val => {
-        console.log(val)
+        props.search(val)
+    }
+
+    const reset = () => {
+        props.search()
+        form.resetFields()
     }
 
     return (
@@ -27,13 +32,14 @@ export default function SearchForm(props) {
                 <Form.Item name="keyword">
                     <Input />
                 </Form.Item>
-                <Form.Item name="status" initialValue={''}>
+                <Form.Item name="available" initialValue={''}>
                     <Select
                         options={status}
                     ></Select>
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">搜索</Button>
+                    <Button onClick={reset}>重置</Button>
                 </Form.Item>
             </Form>   
         </>

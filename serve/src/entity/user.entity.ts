@@ -1,6 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity, OneToOne, OneToMany, UpdateDateColumn, CreateDateColumn } from "typeorm";
 import { Article } from "./article.entity";
 import { Profile } from './profile.entity'
+import { Tags } from "./tags.entity";
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
@@ -26,4 +27,10 @@ export class User {
 
     @OneToOne(type => Profile, profile => profile.user)
     profile: Profile
+
+    @OneToMany(type => Article, article => article.user)
+    article: Article[]
+
+    @OneToMany(type => Tags, tags => tags.user)
+    tags: Tags[]
 }

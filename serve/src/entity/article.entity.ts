@@ -59,4 +59,8 @@ export class Article {
 
     @OneToMany(type => Comment, comment => comment.article)
     comment: Comment[]
+
+    @ManyToOne(type => User, user => user.article)
+    @JoinColumn({name: 'user_id'})
+    user: User
 }

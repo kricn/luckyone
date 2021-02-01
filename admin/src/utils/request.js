@@ -38,6 +38,7 @@ API.interceptors.response.use(response => {
         store.dispatch({type: 'LOGIN', payload: '0'})
         return ;
     }
+    Message.error(data.message)
     return Promise.reject(err)
 })
 

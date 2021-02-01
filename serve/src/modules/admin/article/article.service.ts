@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { writeImage } from 'src/utils/common';
 import { Repository, getConnection, getManager  } from 'typeorm';
@@ -21,13 +21,13 @@ export class ArticleService {
     ){}
 
     //添加文章
-    async addArticle(body: ArticleAddDTO): Promise<Result> {
+    async addArticle(body: ArticleAddDTO, user): Promise<Result> {
         const { 
             title, 
             content, 
             summary, 
             cover, 
-            words, 
+            // words, 
             tags,
             status,
             order,
@@ -42,8 +42,9 @@ export class ArticleService {
         article.content = content
         article.summary = summary
         article.cover = tempCover
+        article.user = user.id
         type ? article.type = type : ''
-        words ? article.words = words : ''
+        // words ? article.words = words : ''
         status ? article.status = status : ''
         order ? article.order = order : ''
         
@@ -69,8 +70,9 @@ export class ArticleService {
     }
 
     //修改文章
-    async editArticle(body: ArticleAddDTO, id: number): Promise<Result> {
-        let { title, content, summary, cover, words, tags, status, order } = body
+    async editArticle(body: ArticleAddDTO, id: number, user): Promise<Result> {
+        await this.interceptIllegalUser(id, user)
+        let { title, content, summary, cover, tags, status, order } = body
         if (tags.length < 1) {
             tags = undefined
         }
@@ -81,7 +83,8 @@ export class ArticleService {
         try {
             const articleBuilder = await this.articleRepository
                     .createQueryBuilder('article')
-                    .where('article.id=:id', {id})
+                    .leftJoinAndSelect('article.user', 'user')
+                    .where('article.id=:id and user.id=:user_id', {id, user_id: user.id})
             let article = await articleBuilder.getOne()
             ;(await article).tags = await this.tagsRepository
                                      .createQueryBuilder('i')
@@ -105,27 +108,20 @@ export class ArticleService {
 
 
     //切换文章显示隐藏
-    async switchArticleList(id: number, status: number): Promise<Result> {
+    async switchArticleList(id: number, status: number, user): Promise<Result> {
+        await this.interceptIllegalUser(id, user)
         if (status > 0) {
             status = 1
         } else {
             status = 0
         }
 
-        let articleCount = await this.articleRepository.findAndCount({id})
-        
-        if (!articleCount[1]) {
-            return {
-                code: -1,
-                message: '未找到该文章'
-            }
-        }
-
         await this.articleRepository
             .createQueryBuilder('article')
+            .leftJoinAndSelect('article.user', 'user')
             .update()
             .set({status})
-            .where('article.id=:id', {id: id})
+            .where('article.id=:id and user.id=:user_id', {id: id, user_id: user.id})
             .execute()
 
         return {
@@ -135,13 +131,13 @@ export class ArticleService {
     }
 
     //删除文章
-    async deleteArticle(id: number): Promise<Result> {
-
+    async deleteArticle(id: number, user): Promise<Result> {
+        await this.interceptIllegalUser(id, user)
         await this.articleRepository
-            .createQueryBuilder('article')
-            .delete()
-            .where('article.id=:id', {id})
-            .execute()
+        .createQueryBuilder('article')
+        .delete()
+        .where('article.id=:id and user.id=user_id', {id, user_id: user.id})
+        .execute()
 
         return {
             code: 0,
@@ -191,6 +187,7 @@ export class ArticleService {
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
             .where(sqlString, filterParams)
+            .andWhere('article.user_id=:id', {id: user.id})
             // .andWhere('article.type <>0')  //获取处type为0之外的值也可以 article.type not in (1,2,3)
             .skip(offset || 0)
             .take(limit || 10)
@@ -208,20 +205,40 @@ export class ArticleService {
     }
 
     //获取文章详情
-    async getArticleDetail(params): Promise<Result> {
+    async getArticleDetail(id: number, user): Promise<Result> {
+        await this.interceptIllegalUser(id, user)
         const res = await this.articleRepository
             .createQueryBuilder('article')
-            // .leftJoinAndSelect('article.user', 'user')
+            .leftJoinAndSelect('article.user', 'user')
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
             // .select(['article', 'images.id'])  //这样写是ok的
             // .where('article.id=:id', {id: params.id})
-            .where('article.id=:id', {id: params.id})
+            .where('article.id=:id and user.id=:user_id', {id, user_id: user.id})
             .getOne() 
         return {
             code: 0,
             message: 'success',
             data: res
         }
+    }
+
+    //拦截非法用户
+    async interceptIllegalUser(id, user):Promise<Boolean> {
+        let article = await this.articleRepository
+            .createQueryBuilder('article')
+            .leftJoinAndSelect('article.user', 'user')
+        let matchArticleCount = await article
+            .where(
+                'article.id=:id and user.id=:user_id', 
+                {id, user_id: user.id}
+            )
+            .getCount()
+        if (matchArticleCount === 0) {
+            throw new HttpException({
+                message: '未找到对应文章'
+            }, HttpStatus.NOT_FOUND)
+        }
+        return true
     }
 }

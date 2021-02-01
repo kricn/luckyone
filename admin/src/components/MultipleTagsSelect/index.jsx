@@ -23,7 +23,7 @@ class MultipleTagsSelect extends Component {
             this.setState({
                 tags: temp
             })
-        })
+        }).catch()
     }
 
     componentWillUnmount() {

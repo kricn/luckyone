@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query, UsePipes, Put, Param, Request, Req } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { ValidationPipe } from 'src/common/pipe/validation.pipe';
 
@@ -12,42 +12,40 @@ export class TagsController {
         private readonly tagsService: TagsService
     ) {}
     
-    //添加标签
-    /**
-     * 
-     * @param body { name: string }
-     */
     @Post()
     @UsePipes(ValidationPipe)
-    async addTags(@Body() body: TagsAddDTO) {
+    async addTags(@Body() body: TagsAddDTO, @Request() req) {
         const { name } = body
-        return await this.tagsService.addTags(name)
+        const { user } = req
+        return await this.tagsService.addTags(name, user)
     }
 
     //获取标签列表
-    /**
-     * 
-     * @param query {id: string } 通过,连接id
-     */
     @Get()
-    async getTagsList(@Query() query) {
-        return this.tagsService.getTagsList(query)
+    async getTagsList(@Query() query, @Request() req) {
+        const { user } = req
+        return this.tagsService.getTagsList(query, user)
     }
 
-    //删除标签
-    /**
-     * 
-     * @param query {id: string } 通过,连接id
-     */
     @Delete()
-    async deleteTags(@Query() query: { id: string }) {
-        const { id } = query
-        return this.tagsService.deleteTags(id)
+    async deleteTags(@Body('id') id, @Request() req) {
+        const { user } = req
+        return this.tagsService.deleteTags(id, user)
     }
 
-    @Get('/ban')
-    async banTags(@Query() query: { id: string }) {
-        const { id } = query
-        return this.tagsService.banTags(id)
+    //修改标签
+    @Put('/:id')
+    async updateTag(@Body() body: {name: string}, @Param('id') id: number, @Request() req) {
+        const user = req.user
+        const { name } = body
+        return await this.tagsService.updatetag(id, name, user)
+    }
+
+    //切换标签状态
+    @Put('/switch/:id')
+    async swtichTagsStatus(@Body() body: { available: number }, @Param('id') id, @Request() req) {
+        const user = req.user
+        const { available } = body
+        return this.tagsService.swtichTagsStatus(id, available, user)
     }
 }
