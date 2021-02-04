@@ -6,6 +6,11 @@ import { MenuFoldOutlined} from '@ant-design/icons'
 
 import { deepCopy } from '@/utils/common'
 
+import store from '@/store'
+// api
+
+// function
+import { getCurrentUser } from '@/utils/common'
 import style from './index.module.scss'
 import logo from '@/image/yz.jpg'
 
@@ -37,11 +42,20 @@ class Aside extends Component {
     })
   }
 
-  //过滤动态路由和不显示路由
+  //过滤动态路由和不显示路由和没有权限路由
   filterRoutes = routes => {
+    const user = store.getState().appReducer.user
+    const role = user && user.role
+    if (!user) {
+      getCurrentUser()
+      return false;
+    }
     return routes.filter(item => {
       if (item.children && item.children.length > 0) {
         item.children = this.filterRoutes(item.children)
+      }
+      if (item.meta && item.meta.role && role !== 1) {
+        return false
       }
       return !(item.meta && item.meta.noMenu) && !item.path.includes(':')
     })
@@ -57,7 +71,7 @@ class Aside extends Component {
         <SubMenu key={path} title={meta.title} icon={React.createElement(meta.icon)}>
           {
             children.map(i => {
-              return (<Menu.Item key={i.path}>
+              return (<Menu.Item key={i.path}  icon={React.createElement(meta.icon)}>
                 <Link to={i.path}>{i.meta.title}</Link>
               </Menu.Item>)
             })

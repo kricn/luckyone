@@ -35,7 +35,8 @@ API.interceptors.response.use(response => {
     const data = err.response.data
     if (statusCode === 401) {
         Message.error(data.message)
-        store.dispatch({type: 'LOGIN', payload: '0'})
+        localStorage.removeItem('token')
+        store.dispatch({type: 'SETUSER', payload: null})
         return ;
     }
     Message.error(data.message)

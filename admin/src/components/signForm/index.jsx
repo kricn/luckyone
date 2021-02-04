@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom'
 
 //antd
-import { Button, Form, Input, Message } from 'antd'
+import { Button, Form, Input } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 //api
@@ -26,13 +26,6 @@ class SignForm extends Component {
         }
     }
 
-    //props生命周期
-    // componentDidMount(value) {
-    //     this.setState({
-    //         mode: value.mode
-    //     })
-    // }
-
     onFinish = values => {
         const { mode } = this.state
         const _this = this
@@ -44,8 +37,6 @@ class SignForm extends Component {
                 setToken(res.data.token)
                 store.dispatch({type: 'LOGIN', payload: '1'})
                 this.props.history.push('/')
-            }).catch(err => {
-                Message.error('登录失败.')
             }).finally(() => {
                 _this.setState({
                     loading: false
@@ -92,9 +83,7 @@ class SignForm extends Component {
     }
     
     componentWillUnmount = () => {
-        this.setState = (state,callback)=>{
-            return;
-        };
+        this.setState = () => null
     }
 
 }

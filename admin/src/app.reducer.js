@@ -1,18 +1,15 @@
-import { login, setUser } from './app.action'
-import { setAuth, getAuth } from '@/utils/session'
+import {  setUser } from './app.action'
 
 const initState = {
-    isAuth: getAuth('isAuth') || '0',
     list: [],
-    user: {}
+    user: null
 }
 
 const appReducer = (state = initState, action) => {
     const { type, payload } = action
     switch (type) {
         case 'LOGIN':
-            setAuth(payload)
-            return login(state, payload)
+            return state
         case 'SETUSER':
             return setUser(state, payload)
         default:

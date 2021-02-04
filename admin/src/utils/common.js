@@ -1,3 +1,6 @@
+import { getCurrent } from '@/api/account'
+import store from '@/store'
+
 const deepCopy = obj => {
     if (typeof obj == "object") {
         //复杂数据类型
@@ -12,6 +15,15 @@ const deepCopy = obj => {
     }
 }
 
+const getCurrentUser = () => {
+    getCurrent().then(res => {
+        store.dispatch({type: 'SETUSER', payload: res.data})
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
 export {
-    deepCopy
+    deepCopy,
+    getCurrentUser
 }

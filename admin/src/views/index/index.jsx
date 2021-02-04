@@ -12,10 +12,6 @@ import PrivateRouter from '@/components/praviteRouter'
 
 import style from './index.module.scss'
 
-import store from '@/store'
-
-import { getAuth } from '@/utils/session.js'
-
 const { Header, Sider, Content } = Layout
 
 export default class Index extends Component {
@@ -26,7 +22,6 @@ export default class Index extends Component {
       menu: [],
       loading: true,
       collapsed: false,
-      isAuth: getAuth('isAuth') || '0'
     }
   }
 
@@ -36,11 +31,6 @@ export default class Index extends Component {
     this.setState({
       menu: menu,
       loading: false
-    })
-    this.unsubscribe = store.subscribe(() => {
-      this.setState({
-        isAuth: store.getState().appReducer.isAuth
-      })
     })
   }
   componentWillUnmount() {
@@ -59,7 +49,7 @@ export default class Index extends Component {
   //渲染路由
   renderRoutes = routes => {
     return this.flatRoutes(routes).map(route => {
-      return <PrivateRouter isAuth={this.state.isAuth} key={route.path} {...route} />
+      return <PrivateRouter key={route.path} {...route} />
     })
   }
 

@@ -14,7 +14,7 @@ class MultipleTagsSelect extends Component {
 
     componentDidMount() {
         getTagsList({available: 1}).then(res => {
-            let temp = res.data && res.data.list.map(item => {
+            let temp = res && res.data && res.data.list.map(item => {
                 return {
                     label: item.name,
                     value: item.id
@@ -27,7 +27,7 @@ class MultipleTagsSelect extends Component {
     }
 
     componentWillUnmount() {
-        this.setState(() => null)
+        this.setState = () => null
     }
 
     render() {

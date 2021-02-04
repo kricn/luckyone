@@ -57,6 +57,17 @@ const menu = [
     }
   },
   {
+    path: '/alian/user',
+    component: LazyLoad(() => import('@/views/Manager/User')),
+    exact: true,
+    meta: {
+      title: '用户管理',
+      icon: BarChartOutlined,
+      auth: true,
+      role: true
+    }
+  },
+  {
     path: '/alian/setting',
     component: LazyLoad(() => import('@/views/setting')),
     exact: true,

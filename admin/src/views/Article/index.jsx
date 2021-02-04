@@ -23,7 +23,7 @@ class Article extends Component {
   componentDidMount() {
     this.getArticleList(this.state.params)
     getTagsList({available: 1}).then(res => {
-      this.setState({tags: res.data.list})
+      this.setState({tags: res && res.data && res.data.list})
     })
   }
   componentWillUnmount() {
@@ -36,8 +36,8 @@ class Article extends Component {
     this.setState({loading: true})
     getArticleList(params).then(res => {
       this.setState({
-        list: [...(res && res.data && res.data.list)],
-        total: res.data && res.data.total
+        list: (res && res.data && res.data.list),
+        total: res && res.data && res.data.total
       })
     }).catch().finally(() => {
       this.setState({loading: false})

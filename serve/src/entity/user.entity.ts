@@ -19,6 +19,12 @@ export class User {
     @Column({length: 20})
     password: string;
 
+    @Column({
+        comment: '是否为超管，1是 2不是',
+        default: 2
+    })
+    role: number
+
     @CreateDateColumn()
     created_date: Date;
 
