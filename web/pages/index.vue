@@ -60,12 +60,32 @@ export default {
         marginTop: - 0.5 * y + 'px'
       }
       this.layerStyle = Object.assign({}, this.layerStyle, style)
+      console.log(this.layerStyle)
       this.coverImg()
     },
     coverImg() {
-      
+      const width = parseInt(this.layerStyle.width), //承载图片容器的宽高
+          height = parseInt(this.layerStyle.height),
+				  ratio = 1080 / 1920, //高宽比
+				  style = {};
+      const compute = height / width > ratio; //图片形状和容器形状比较， true为容器为竖直矩形
+
+      style['width'] = compute ? (height / ratio + 'px') : `${width}px`;  //调整图片宽高
+			style['height'] = compute ? `${height}px` : (width * ratio + 'px');
+
+			style['left'] = (width - parseInt(style.width)) / 2 +'px';  //图片一定的偏移量，防止动的时候出现空白
+			style['top'] = (height - parseInt(style.height)) / 2 +'px';
+
+      this.imgStyle = Object.assign({}, this.imgStyle, style);
+      console.log(this.imgStyle)
     }
   },
+  beforeRouteEnter(to,from,next){
+		next(vm => {
+			vm.init()
+			window.onresize = () => vm.init
+		})
+	},
   mounted() {
     // const scene = document.getElementById('scene');
 		// const parallaxInstance = new Parallax(scene, {
