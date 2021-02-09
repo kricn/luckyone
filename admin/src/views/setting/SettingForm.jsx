@@ -36,7 +36,10 @@ export default function SettingForm(props) {
     
     return (
         <>
-        <Form onFinish={onSubmit} form={form}>
+        <Form 
+            onFinish={onSubmit} 
+            form={form}
+        >
             <Form.Item label="头像" name="avatar" valuePropName="url">
                 <SinglePictureUpload />
             </Form.Item>
@@ -49,6 +52,9 @@ export default function SettingForm(props) {
             <Form.Item name="cover" valuePropName="url" label="封面图" className={style.cover}>
                 <SinglePictureUpload />
             </Form.Item>
+            <Form.Item name="color" label="遮罩颜色">
+                <input type="color" />
+            </Form.Item>
             <Form.Item name="article" label="文章">
                 <Select 
                     options={props.articleList}
@@ -58,6 +64,12 @@ export default function SettingForm(props) {
                 <TextArea 
                     autoSize={{ minRows: 2, maxRows: 6 }}
                 />
+            </Form.Item>
+            <Form.Item name="ipx_text" label="备案文字">
+                <Input />
+            </Form.Item>
+            <Form.Item name="ipx_link" label="备案链接">
+                <Input />
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit">

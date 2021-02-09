@@ -25,6 +25,12 @@ export class Profile {
 
     @Column({
         nullable: true,
+        comment: '封面遮罩颜色'
+    })
+    color: string
+
+    @Column({
+        nullable: true,
         comment: '封面文章的简介'
     })
     summary: string
@@ -48,7 +54,6 @@ export class Profile {
     updated_date: Date;
 
     @OneToOne(type => User, user => user.profile)
-    // @JoinColumn({name: 'user_name', referencedColumnName: 'username'})
     @JoinColumn({name: 'user_id'})
     user: User
 }
