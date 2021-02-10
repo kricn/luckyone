@@ -3,35 +3,55 @@
     <div class="cover">
       <div id="scene" :style="{height:boxH}">
         <div class="layer" data-depth="0.2" :style="layerStyle">
-          <img id="image" :style="imgStyle" src="../assets/cover.png" width="1920" height="1080">
+          <img v-if="user.profile.access_cover_url" id="image" :style="imgStyle" :src="user.profile.access_cover_url" width="1920" height="1080">
+          <img v-else id="image" :style="imgStyle" src="../assets/cover.png" width="1920" height="1080">
         </div>
       </div>
-      <div class="mask" style="background-color: ##ffc7c7"></div>
+      <div class="mask" :style="`background-color: ${user.profile.color || '#ffc7c7'}; opacity: .5`"></div>
       <div class="post">
-				<div class="time">时间</div>
-				<div class="title">{{'标题'}}</div>
-				<div class="describe">{{'描述'}}</div>
+				<div class="time">{{time}}</div>
+				<div class="title">{{user.profile.title}}</div>
+				<div class="describe">{{user.profile.summary}}</div>
 			</div>
     </div>
+    {{user}}
+    {{list}}
   </div>
 </template>
 
 <script>
 import Parallax from 'parallax-js'
+import { format } from 'date-fns'
 export default {
   async asyncData(context) {
-    const data = await context.$axios.get('/article')
+    const [
+      res1,
+      res2
+    ] = await Promise.all([
+      context.$axios.get('/user'),
+      context.$axios.get('/article')
+    ])
     return {
-      list: data.data.data.list,
+      user: res1.data,
+      list: res2.data
     }
   },
   data() {
     return {
-      list: [],
+      user: null,
+      list: null,
       layerStyle: {},
       imgStyle: {},
       boxW: '100%', // 视口宽度
       boxH: '100%', // 视口高度
+    }
+  },
+  computed: {
+    time() {
+      const year = format(new Date(this.user.profile.updated_date), 'yyyy') 
+      const month = format(new Date(this.user.profile.updated_date), 'M')
+      const day = format(new Date(this.user.profile.updated_date), 'dd')
+      return `${month}月${day}日，${year}`
     }
   },
   methods: {
@@ -74,14 +94,13 @@ export default {
       const compute = height / width > ratio; //图片形状和容器形状比较， true为容器为竖直矩形
 
       style['width'] = compute ? (height / ratio + 'px') : `${width}px`;  //调整图片宽高
-      console.log(style.width)
 			style['height'] = compute ? `${height}px` : (width * ratio + 'px');
 
 			style['left'] = (width - parseInt(style.width)) / 2 +'px';  //图片一定的偏移量，防止动的时候出现空白
 			style['top'] = (height - parseInt(style.height)) / 2 +'px';
 
       this.imgStyle = Object.assign({}, this.imgStyle, style);
-    }
+    },
   },
   beforeRouteEnter(to,from,next){
 		next(vm => {

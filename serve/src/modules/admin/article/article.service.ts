@@ -191,7 +191,7 @@ export class ArticleService {
             // .andWhere('article.type <>0')  //获取处type为0之外的值也可以 article.type not in (1,2,3)
             .skip(offset || 0)
             .take(limit || 10)
-            // .orderBy('article.order', sort?'ASC':'DESC')
+            .orderBy('article.order', sort?'ASC':'DESC')
             // .getSql()
             .getManyAndCount()
         return {

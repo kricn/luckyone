@@ -30,7 +30,6 @@ export default function SettingForm(props) {
             props.reload()
         }).catch(err => {
             Message.error('更新失败')
-            console.log(err)
         })
     }
     
@@ -39,8 +38,11 @@ export default function SettingForm(props) {
         <Form 
             onFinish={onSubmit} 
             form={form}
+            labelAlign="right"
+            labelCol={{span: 3}}
+            layout="horizontal"
         >
-            <Form.Item label="头像" name="avatar" valuePropName="url">
+            <Form.Item label="头像" name="avatar" valuePropName="url" className={style.avatar}>
                 <SinglePictureUpload />
             </Form.Item>
             <Form.Item name="username" label="用户名">
@@ -53,12 +55,15 @@ export default function SettingForm(props) {
                 <SinglePictureUpload />
             </Form.Item>
             <Form.Item name="color" label="遮罩颜色">
-                <input type="color" />
+                <Input type="color" />
             </Form.Item>
             <Form.Item name="article" label="文章">
                 <Select 
                     options={props.articleList}
                 />
+            </Form.Item>
+            <Form.Item name="title" label="标题">
+                <Input />
             </Form.Item>
             <Form.Item name="summary" label="简介">
                 <TextArea 
@@ -71,9 +76,9 @@ export default function SettingForm(props) {
             <Form.Item name="ipx_link" label="备案链接">
                 <Input />
             </Form.Item>
-            <Form.Item>
+            <Form.Item wrapperCol={{offset: 3}}>
                 <Button type="primary" htmlType="submit">
-                    Submit
+                    提交
                 </Button>
             </Form.Item>
         </Form>

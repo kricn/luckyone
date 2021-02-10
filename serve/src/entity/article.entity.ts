@@ -39,7 +39,6 @@ export class Article {
 
     @Column({
         nullable: true,
-        default: 0,
         comment: '排序位置'
     })
     order: number

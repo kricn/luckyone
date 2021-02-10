@@ -64,5 +64,7 @@ module.exports = {
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    vendor: ['axios']
+  },
 }

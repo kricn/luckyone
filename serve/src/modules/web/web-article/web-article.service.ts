@@ -4,6 +4,8 @@ import { Repository, getConnection, getManager  } from 'typeorm';
 
 import { Article } from '../../../entity/article.entity'
 
+import { filterObject } from '../../../utils/common'
+
 import { Result } from '../../../common/interface/result.interface'
 
 @Injectable()
@@ -19,51 +21,66 @@ export class WebArticleService {
         limit?: number,
         sort?: number,
     ): Promise<Result> {
-        // const only = ['keyword', 'id', 'tags', 'is_show', 'type']
-        // let filterParams = {}
-        // only.forEach(key => {
-        //     if (key === 'tags') {
-        //         filterParams[key] = query[key]?query[key].split(','):undefined
-        //     } else if (key === 'keyword') {
-        //         filterParams[key] = query[key] && `%${query[key]}%`
-        //     } else {
-        //         filterParams[key] = query[key]
-        //     }
-        // })
+        const only = ['tags', 'keyword']
+        let filterParams = {}
+        only.forEach(key => {
+            if (key === 'tags') {
+                // console.log(query[key])
+                filterParams[key] = query[key]?query[key].split(','):undefined
+            } else if (key === 'keyword') {
+                filterParams[key] = query[key] && `%${query[key]}%`
+            } else {
+                filterParams[key] = query[key]
+            }
+        })
         
-        // let queryLen = false
-        // for (let key in query) {
-        //     if (only.indexOf(key) >= 0 && query[key] && !queryLen) {
-        //         queryLen = true
-        //     }
-        // }
+        let queryLen = false
+        let sql = ['article.type=1']
+        for (let key in query) {
+            if (only.indexOf(key) >= 0 && query[key] && !queryLen) {
+                if (key === 'tags') {
+                    sql.push('tags.id in (:...tags) ')
+                } else if (key === 'keyword') {
+                    sql.push('article.title like :keyword ')
+                } else {
+                    sql.push(`article.${key}=:${key}`)
+                }
+            }
+        }
 
-        // let sql = !queryLen ? '' :
-        //           `
-        //             article.title like :keyword 
-        //             or article.id=:id 
-        //             or tags.id in (:...tags) 
-        //             or is_show=:is_show
-        //             or type=:type
-        //           `
-
+        let sqlString = sql.join(' and ')
         const res = await this.articleRepository
             .createQueryBuilder('article')
-            // .leftJoinAndSelect('article.tags', 'tags', 'tags.available=1')  //
             .leftJoinAndSelect('article.tags', 'tags')
             .leftJoinAndSelect('article.comment', 'comment')
-            // .where(sql, filterParams)
-            // .andWhere('article.type <>0')  //获取处type为0之外的值也可以 article.type not in (1,2,3)
+            .where(sqlString, filterParams)
+            .orderBy({
+                'article.id': sort?'ASC':'DESC'
+            })
             .skip(offset || 0)
             .take(limit || 10)
-            // .orderBy('article.order', sort?'ASC':'DESC')
-            // .getSql()
             .getManyAndCount()
+
+        const list = !res[0] ? [] :
+            res[0].sort((a,b) => {
+                if (!a.order) {
+                    return 1
+                } else if (!b.order || (!a.order && !b.order)) {
+                    return -1
+                }
+                return a.order - b.order
+            }).map(item => {
+                return {
+                    ...item,
+                    access_cover_url: process.env.DOMAIN + item.cover,
+                }
+            })
+        
         return {
             code: 0,
             message: 'success',
             data: {
-                list: res[0],
+                list: list,
                 total: res[1]
             }
         }

@@ -5,6 +5,8 @@ import { PlusOutlined, LoadingOutlined, StopOutlined, CheckCircleTwoTone  } from
 
 import { getTagsList, deleteTag, switchTagsStatus, addTag, updateTag } from '@/api/tags'
 
+import style from '../index.module.scss'
+
 const { confirm } = Modal
 
 class TagsComponent extends Component {
@@ -222,7 +224,7 @@ class TagsComponent extends Component {
     
               const tagElem = (
                 <Tag
-                  className="edit-tag"
+                  className={style.tag}
                   key={index}
                   closable={true}
                   onClose={e => {
@@ -264,7 +266,7 @@ class TagsComponent extends Component {
               />
             )}
             {!inputVisible && (
-              <Tag key={tags.id} onClick={this.showInput}>
+              <Tag key={tags.id} onClick={this.showInput} className={style.tag}>
                 <PlusOutlined /> New Tag
               </Tag>
             )}

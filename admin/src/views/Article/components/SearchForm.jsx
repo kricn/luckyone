@@ -46,31 +46,35 @@ export default function SearchForm(props) {
             >
                 <Row
                     type="flex"
+                    style={{margin: '20px 0', flexWrap: 'nowrap'}}
                 >
                     <Col>
-                    <Form.Item name="keyword">
-                        <Input />
-                    </Form.Item>
+                        <Form.Item name="keyword">
+                            <Input placeholder="请输入关键字..." />
+                        </Form.Item>
                     </Col>
-                    <Col>
-                        <Button type="primary" htmlType="submit">搜索</Button>
-                        <Button onClick={reset}>重置</Button>
+                    <Col className={style.btn_group}>
+                        <div>
+                            <Button type="primary" htmlType="submit" style={{margin: '0 20px'}}>搜索</Button>
+                            <Button onClick={reset}>重置</Button>
+                        </div>
+                        <Button type="primary" onClick={props.toCreateArticle}>创建</Button> 
                     </Col>
                 </Row>
-                <Row>
-                    <Col span={6}>
+                <Row className={style.filter_option}>
+                    <Col md={6} sm={8} xs={24}>
                         <Form.Item label="标签" name="tags" initialValue={[]}>
                             <MultipleTagsSelect />
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col md={6} sm={8} xs={24}>
                         <Form.Item label="类型" name="type" initialValue={''}>
                             <Select
                                 options={type}
                             ></Select>
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col md={6} sm={8} xs={24}>
                         <Form.Item label="状态" name="status" initialValue={''}>
                             <Select
                                 options={status}

@@ -30,6 +30,12 @@ export class Profile {
     color: string
 
     @Column({
+        comment: '封面的标题',
+        default: '读者启'
+    })
+    title: string
+
+    @Column({
         nullable: true,
         comment: '封面文章的简介'
     })

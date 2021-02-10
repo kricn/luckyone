@@ -8,6 +8,8 @@ import SearchForm from './components/SearchForm'
 import { getArticleList } from '@/api/article.js'
 import { getTagsList } from '@/api/tags.js'
 
+import style from './index.module.scss'
+
 class Article extends Component {
   constructor(props) {
     super(props)
@@ -69,8 +71,8 @@ class Article extends Component {
           tags={tags}
           search={params => this.search(params)}
           reset={this.resetParams}
+          toCreateArticle={this.toCreateArticle}
         />
-        <Button onClick={this.toCreateArticle}>创建</Button>
         <ArticleTable
           loading={loading}
           dataSource={list} 

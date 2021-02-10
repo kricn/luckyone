@@ -1,4 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
+import { resourceLimits } from 'worker_threads';
 import { WebArticleService } from './web-article.service'
 
 @Controller('web/article')
@@ -8,7 +9,12 @@ export class WebArticleController {
     ) {}
 
     @Get()
-    async getArticleList() {
-        return this.webArticleService.getArticleList()
+    async getArticleList(
+        @Query() query, 
+        @Query('offset') offset,
+        @Query('limit') limit,
+        @Query('sort') sort
+    ) {
+        return this.webArticleService.getArticleList(query, offset, limit, sort)
     }
 }

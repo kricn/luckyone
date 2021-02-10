@@ -13,12 +13,20 @@ export class UserService {
     ){}
     
     async getCurrentUser(username: string) {
-        return await this.userRepository
+        let res = await this.userRepository
             .createQueryBuilder('user')
             .leftJoinAndSelect('user.profile', 'p')
             .select(['user.id', 'user.username', 'user.nickname', 'user.role', 'p'])
             .where('user.username = :username', {username})
             .getOne()
+        return {
+            ...res,
+            profile: {
+                ...res.profile,
+                access_avatar_url: res.profile.avatar ? process.env.DOMAIN + res.profile.avatar : '',
+                access_cover_url: res.profile.cover ? process.env.DOMAIN + res.profile.cover : '',
+            }
+        }
     }
 
     async findUser(username: string) {
@@ -84,9 +92,14 @@ export class UserService {
 
     async update(body, user) {
         let target = '/profile'
-        const { cover, avatar, article, summary, nickname, ipx_text, ipx_link, color } = body
-        const cover_path = await writeImage(cover, target)
-        const avatar_path = await writeImage(avatar, target)
+        const { cover, avatar, article, summary, nickname, ipx_text, ipx_link, color, title } = body
+        let cover_path = cover, avatar_path = avatar
+        if (!cover_path.match(target)) {
+            cover_path = await writeImage(cover, target)
+        }
+        if (!avatar_path.match(target)) {
+            avatar_path = await writeImage(avatar, target)
+        } 
         await getConnection()
             .createQueryBuilder()
             .update(Profile)
@@ -97,7 +110,8 @@ export class UserService {
                 summary,
                 ipx_text,
                 ipx_link,
-                color
+                color,
+                title
             })
             .where("user_id=:id", {id: user.id})
             .execute()

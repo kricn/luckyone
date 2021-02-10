@@ -14,6 +14,7 @@ import { HttpExceptionFilter } from './common/filter/http-exception.filter'
 import { ArticleModule } from './modules/admin/article/article.module';
 import { TagsModule } from './modules/admin/tags/tags.module';
 import { WebArticleModule } from './modules/web/web-article/web-article.module';
+import { WebUserModule } from './modules/web/web-user/web-user.module';
 
 
 
@@ -33,7 +34,8 @@ import { WebArticleModule } from './modules/web/web-article/web-article.module';
     UploadModule,
     ArticleModule,
     TagsModule,
-    WebArticleModule
+    WebArticleModule,
+    WebUserModule
   ],
   controllers: [AppController],
   providers: [

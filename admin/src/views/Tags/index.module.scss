@@ -1,0 +1,11 @@
+.search_field {
+  margin: 20px 0;
+  :global(.ant-select) {
+    min-width: 150px;
+  }
+}
+.tag {
+  line-height: 28px !important;
+  margin-bottom: 12px !important;
+  margin-top: 12px !important;
+}

@@ -33,7 +33,7 @@ class MdEditor extends Component {
         const formdata = new FormData()
         formdata.append('file', $file)
         uploadImg(formdata).then(res => {
-            this.$vm.current.$img2Url($file.name, process.env.REACT_APP_API + res.data.path)
+            this.$vm.current.$img2Url($file.name, res.data.path)
         })
     }
 

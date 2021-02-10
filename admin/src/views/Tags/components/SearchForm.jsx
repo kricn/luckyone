@@ -2,6 +2,8 @@ import React from 'react'
 
 import { Button, Form, Select, Input } from 'antd'
 
+import style from '../index.module.scss'
+
 export default function SearchForm(props) {
 
     const [form] = Form.useForm()
@@ -28,9 +30,10 @@ export default function SearchForm(props) {
                 layout="inline"
                 onFinish={search}
                 form={form}
+                className={style.search_field}
             >
                 <Form.Item name="keyword">
-                    <Input />
+                    <Input placeholder="请输入关键字..." />
                 </Form.Item>
                 <Form.Item name="available" initialValue={''}>
                     <Select
@@ -38,7 +41,7 @@ export default function SearchForm(props) {
                     ></Select>
                 </Form.Item>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">搜索</Button>
+                    <Button type="primary" htmlType="submit" style={{marginRight: '20px'}}>搜索</Button>
                     <Button onClick={reset}>重置</Button>
                 </Form.Item>
             </Form>   

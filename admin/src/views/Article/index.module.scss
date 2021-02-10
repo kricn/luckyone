@@ -1,5 +1,22 @@
 .search_field {
+    margin-bottom: 20px;
     :global(.ant-row) {
         width: 100%;
+    }
+    .filter_option {
+        >:global(.ant-col) {
+            margin-right: 20px;
+        }
+    }
+    .btn_group {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+.cover {
+    :global(.ant-upload) {
+        width: 320px;
+        height: 200px;
     }
 }

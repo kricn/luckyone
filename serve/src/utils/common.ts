@@ -39,3 +39,14 @@ export const writeImage = function (source: string, target: string): Promise<str
         }
     })
 }
+
+export function filterObject(obj, arr) {
+    if (typeof obj !== 'object' || !Array.isArray(arr)) {
+        throw new Error('参数格式错误')
+    }
+    const result = {}
+    Object.keys(obj).filter(item => obj[item] && arr.includes(item)).forEach(i => {
+        result[i] = obj[i]
+    })
+    return result
+}

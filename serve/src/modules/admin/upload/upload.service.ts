@@ -27,7 +27,7 @@ export class UploadService {
             message: '上传成功',
             data: {
                 filename,
-                path: `/article/${filename}`
+                path: `${process.env.DOMAIN}/article/${filename}`
             }
         }
     }
