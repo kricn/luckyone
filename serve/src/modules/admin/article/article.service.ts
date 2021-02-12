@@ -78,7 +78,11 @@ export class ArticleService {
         }
         let imagesPath = '/article'
 
-        let tempCover = await writeImage(cover, imagesPath)        
+        let tempCover = cover
+        
+        if (!tempCover.match(imagesPath)) {
+            tempCover = await writeImage(cover, imagesPath)   
+        }
 
         try {
             const articleBuilder = await this.articleRepository

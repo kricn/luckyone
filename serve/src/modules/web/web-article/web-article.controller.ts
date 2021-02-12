@@ -17,4 +17,8 @@ export class WebArticleController {
     ) {
         return this.webArticleService.getArticleList(query, offset, limit, sort)
     }
+    @Get('/tags')
+    async getTags() {
+        return this.webArticleService.getTags()
+    }
 }

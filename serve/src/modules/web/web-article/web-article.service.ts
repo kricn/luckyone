@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, getManager  } from 'typeorm';
 
 import { Article } from '../../../entity/article.entity'
+import { Tags } from '../../../entity/tags.entity'
 
 import { filterObject } from '../../../utils/common'
 
@@ -12,6 +13,7 @@ import { Result } from '../../../common/interface/result.interface'
 export class WebArticleService {
     constructor(
         @InjectRepository(Article) private readonly articleRepository: Repository<Article>,
+        @InjectRepository(Tags) private readonly tagsRepository: Repository<Tags>,
     ) {}
 
     //获取文章列表
@@ -81,6 +83,23 @@ export class WebArticleService {
             message: 'success',
             data: {
                 list: list,
+                total: res[1]
+            }
+        }
+    }
+
+    //获取标签
+    async getTags() {
+        const res = await this.tagsRepository
+            .createQueryBuilder('tags')
+            .where('available=1')
+            .getManyAndCount()
+        
+        return {
+            code: 0,
+            message: 'success',
+            data: {
+                list: res[0],
                 total: res[1]
             }
         }
