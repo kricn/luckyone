@@ -11,9 +11,13 @@ html, body {
   background: #eee;
 }
 
+#__nuxt, #__layout {
+	width: 100%;
+	height: 100%;
+}
+
 body{
 	overflow-x: hidden;
-	background: #fff;
 }
 body::-webkit-scrollbar{
 	width: 5px;

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Param } from '@nestjs/common';
 import { resourceLimits } from 'worker_threads';
 import { WebArticleService } from './web-article.service'
 
@@ -20,5 +20,9 @@ export class WebArticleController {
     @Get('/tags')
     async getTags() {
         return this.webArticleService.getTags()
+    }
+    @Get('/:id')
+    async getArticleDetail(@Param('id') id) {
+        return await this.webArticleService.getArticleDetail(id)
     }
 }

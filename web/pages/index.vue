@@ -10,8 +10,8 @@
       <div class="mask" :style="`background-color: ${user.profile.color || '#ffc7c7'}; opacity: .5`"></div>
       <div class="post">
 				<div class="time">{{time}}</div>
-				<div class="title">{{user.profile.title}}</div>
-				<div class="describe">{{user.profile.summary}}</div>
+				<div class="title"><nuxt-link :to="`/article/${user.profile.article}`">{{user.profile.article_title}}</nuxt-link></div>
+				<div class="describe">{{user.profile.article_summary}}</div>
 			</div>
     </div>
     <div class="content">
@@ -19,10 +19,14 @@
         <template v-for="item in list">
           <div :key="item.id" class="list">
             <div class="box">
-              <div class="cover" :style="`background-image: url(${item.access_cover_url})`" />
+              <div 
+                class="cover" 
+                :style="`background-image: url(${item.access_cover_url})`" 
+                @click="toArticle(item.id)"
+              />
               <div class="info">
                 <div>
-                  <div class="title">{{ item.title }}</div>
+                  <div class="title"><nuxt-link :to="`/article/${item.id}`">{{ item.title }}</nuxt-link></div>
                   <div class="summary">{{item.summary}}</div>
                 </div>
                 <div class="detail">
@@ -34,8 +38,8 @@
         </template>
       </div>
     </div>
-    <footer>
-      也叫
+    <footer v-if="user.profile.ipx_link" class="footer">
+      <a :href="user.profile.ipx_link" >{{ user.profile.ipx_text || '备案文字' }}</a>
     </footer>
   </div>
 </template>
@@ -133,6 +137,11 @@ export default {
 
       this.imgStyle = Object.assign({}, this.imgStyle, style);
     },
+    toArticle(id) {
+      this.$router.push({
+        path: `/article/${id}`
+      })
+    }
   },
   beforeRouteEnter(to,from,next){
 		next(vm => {
@@ -182,6 +191,8 @@ export default {
     }
     .title{
       margin: 15px 0 30px;
+      font-size: 2em;
+      font-weight: 600;
       a{
         font-size: 28px;
         color: #fff;
@@ -206,7 +217,7 @@ export default {
     flex-wrap: wrap;
     margin: auto;
     .list {
-      width: 25%;
+      width: 33.33%;
       padding: 8px;
       .box {
         background-color: #fff;
@@ -216,7 +227,6 @@ export default {
         height: 320px;
         display: flex;
         flex-direction: column;
-        cursor: pointer;
         transition: transform ease .3s;
         &:hover{
           transform: translateY(-4px);
@@ -226,6 +236,7 @@ export default {
           height: 200px;
           background-position: center;
           background-size: cover;
+          cursor: pointer;
         }
         .info {
           display: flex;
@@ -240,6 +251,7 @@ export default {
             font-weight: 600;
             font-size: 1.2em;
             padding: 4px 0;
+            cursor: pointer;
           }
           .summary {
             color: #aaa;
@@ -252,6 +264,11 @@ export default {
       }
     }
   }
+}
+.footer {
+  min-height: 70px;
+  text-align: center;
+  line-height: 70px;
 }
 @media screen and (max-width: 1024px){
   .content {
@@ -272,13 +289,6 @@ export default {
       width: 40%;
       .title a{
         font-size: 22px;
-      }
-    }
-  }
-  .content {
-    .article {
-      .list {
-        // width: 50%;
       }
     }
   }

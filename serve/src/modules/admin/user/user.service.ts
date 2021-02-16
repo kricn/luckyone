@@ -92,7 +92,7 @@ export class UserService {
 
     async update(body, user) {
         let target = '/profile'
-        const { cover, avatar, article, summary, nickname, ipx_text, ipx_link, color, title } = body
+        const { cover, avatar, article, summary, nickname, ipx_text, ipx_link, color, title, article_title, article_summary } = body
         let cover_path = cover, avatar_path = avatar
         if (!cover_path.match(target)) {
             cover_path = await writeImage(cover, target)
@@ -111,7 +111,9 @@ export class UserService {
                 ipx_text,
                 ipx_link,
                 color,
-                title
+                title,
+                article_title,
+                article_summary
             })
             .where("user_id=:id", {id: user.id})
             .execute()

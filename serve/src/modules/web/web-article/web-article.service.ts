@@ -1,4 +1,4 @@
-import { Injectable,  } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, getManager  } from 'typeorm';
 
@@ -70,7 +70,7 @@ export class WebArticleService {
                 } else if (!b.order || (!a.order && !b.order)) {
                     return -1
                 }
-                return a.order - b.order
+                return Number(a.order) - Number(b.order)
             }).map(item => {
                 return {
                     ...item,
@@ -102,6 +102,28 @@ export class WebArticleService {
                 list: res[0],
                 total: res[1]
             }
+        }
+    }
+
+    //获取文章详情
+    async getArticleDetail(id: number): Promise<Result> {
+
+        let count = await this.articleRepository.count({id})
+        if (count === 0) {
+            throw new HttpException({
+                message: '未找到对应文章'
+            }, HttpStatus.NOT_FOUND)
+        }
+        let res = await this.articleRepository
+            .createQueryBuilder('article')
+            .leftJoinAndSelect('article.tags', 'tags')
+            .leftJoinAndSelect('article.comment', 'comment')
+            .where('article.id=:id', {id})
+            .getOne()
+        return {
+            code: 0,
+            message: '获取成功',
+            data: res
         }
     }
 }

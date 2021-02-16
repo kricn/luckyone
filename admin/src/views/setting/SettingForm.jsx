@@ -51,6 +51,15 @@ export default function SettingForm(props) {
             <Form.Item name="nickname" label="昵称">
                 <Input />
             </Form.Item>
+            <Form.Item name="title" label="网站标题">
+                <Input placeholder="请输入网站标题" />
+            </Form.Item>
+            <Form.Item name="summary" label="网站简介">
+                <TextArea 
+                    autoSize={{ minRows: 2, maxRows: 6 }}
+                    placeholder="请输入网站简介，用于seo" 
+                />
+            </Form.Item>
             <Form.Item name="cover" valuePropName="url" label="封面图" className={style.cover}>
                 <SinglePictureUpload />
             </Form.Item>
@@ -62,12 +71,13 @@ export default function SettingForm(props) {
                     options={props.articleList}
                 />
             </Form.Item>
-            <Form.Item name="title" label="标题">
-                <Input />
+            <Form.Item name="article_title" label="标题">
+                <Input placeholder="封面文章的标题" />
             </Form.Item>
-            <Form.Item name="summary" label="简介">
+            <Form.Item name="article_summary" label="简介">
                 <TextArea 
                     autoSize={{ minRows: 2, maxRows: 6 }}
+                    placeholder="封面文章下的简介" 
                 />
             </Form.Item>
             <Form.Item name="ipx_text" label="备案文字">

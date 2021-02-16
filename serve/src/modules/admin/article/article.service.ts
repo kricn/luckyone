@@ -95,7 +95,7 @@ export class ArticleService {
                                      .where('i.id in (:...id)', {id: tags})
                                      .getMany()
             await this.articleRepository.save(article)
-            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, status, order}).execute()
+            await articleBuilder.update(Article).set({title, content, summary, cover: tempCover, status, order: order || null}).execute()
         } catch(e) {
             console.log(e)
             return {
@@ -195,7 +195,6 @@ export class ArticleService {
             // .andWhere('article.type <>0')  //获取处type为0之外的值也可以 article.type not in (1,2,3)
             .skip(offset || 0)
             .take(limit || 10)
-            .orderBy('article.order', sort?'ASC':'DESC')
             // .getSql()
             .getManyAndCount()
         return {

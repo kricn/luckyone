@@ -30,16 +30,28 @@ export class Profile {
     color: string
 
     @Column({
-        comment: '封面的标题',
-        default: '读者启'
+        comment: '网站标题',
+        default: 'kricn'
     })
     title: string
 
     @Column({
         nullable: true,
-        comment: '封面文章的简介'
+        comment: '网站描述'
     })
     summary: string
+
+    @Column({
+        comment: '封面的标题',
+        default: '读者启'
+    })
+    article_title: string
+
+    @Column({
+        nullable: true,
+        comment: '封面文章的简介'
+    })
+    article_summary: string
 
     @Column({
         nullable: true,
